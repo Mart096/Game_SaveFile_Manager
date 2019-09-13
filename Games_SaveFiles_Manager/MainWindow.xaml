@@ -1,0 +1,41 @@
+﻿<Window x:Class="Games_SaveFiles_Manager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Games_SaveFiles_Manager"
+        mc:Ignorable="d"
+        Title="Save files manager" Height="450" Width="628" MinWidth="628" MinHeight="450">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Height="23" VerticalAlignment="Top" Grid.ColumnSpan="2">
+            <MenuItem Header="Program">
+                <MenuItem Name="menu_about_button" Header="About" Click="Menu_about_button_Click"/>
+                <MenuItem Name="menu_quit_button" Header="Quit" Click="Menu_quit_button_Click"/>
+            </MenuItem>
+            <MenuItem Header="Profiles &amp; Games">
+                <MenuItem Header="Manage profiles' list"/>
+                <MenuItem Header="Manage games' list"/>
+            </MenuItem>
+        </Menu>
+
+        <Label Grid.Row="1" Content="Profile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        <Label Grid.Row="1" Content="Game" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="120,10,0,0"/>
+        <ListBox Name="profile_listbox"  Grid.Row="1" HorizontalAlignment="Left" Width="100" Margin="10,41,0,10"/>
+        <ListBox Name="games_listbox" Grid.Row="1" HorizontalAlignment="Left" Width="190" Margin="120,41,0,10"/>
+
+        <Label Grid.Row="1" Margin="328,10,0,0" Content="Save file directory" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        <TextBox Name="game_saves_directory" Grid.Row="1" Height="25" Margin="328,41,10,330" />
+        <Button Name="apply_profile_button" Grid.Row="1" Content="Apply profile" Margin="0,0,10,10" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="80" Click="Apply_profile_button_Click"/>
+        <Button x:Name="apply_profile_button_Copy" Grid.Row="1" Margin="0,0,101,10" HorizontalContentAlignment="Left" HorizontalAlignment="Right" Width="100" Height="36" VerticalAlignment="Bottom" Click="Apply_profile_button_Copy_Click">
+            <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="96">
+                Change save file's directory
+            </TextBlock>
+        </Button>
+
+    </Grid>
+</Window>
