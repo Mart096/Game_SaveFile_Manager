@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Games_SaveFiles_Manager", "Games_SaveFiles_Manager\Games_SaveFiles_Manager.csproj", "{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{3EA846D9-A284-4FDB-BD9C-8CEB1E612C3B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D2484DFC-220D-4C41-8B49-C991F27C8305}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3EA846D9-A284-4FDB-BD9C-8CEB1E612C3B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3EA846D9-A284-4FDB-BD9C-8CEB1E612C3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3EA846D9-A284-4FDB-BD9C-8CEB1E612C3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3EA846D9-A284-4FDB-BD9C-8CEB1E612C3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2484DFC-220D-4C41-8B49-C991F27C8305}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2484DFC-220D-4C41-8B49-C991F27C8305}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2484DFC-220D-4C41-8B49-C991F27C8305}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2484DFC-220D-4C41-8B49-C991F27C8305}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
