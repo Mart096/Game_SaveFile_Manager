@@ -18,8 +18,8 @@
                 <MenuItem Name="menu_quit_button" Header="Quit" Click="Menu_quit_button_Click"/>
             </MenuItem>
             <MenuItem Header="Profiles &amp; Games">
-                <MenuItem Header="Manage profiles' list"/>
-                <MenuItem Header="Manage games' list"/>
+                <MenuItem Header="Manage profiles' list" Click="Manage_Profiles_List_Click"/>
+                <MenuItem Header="Manage games' list" Click="Manage_Games_List_Click"/>
             </MenuItem>
         </Menu>
 
