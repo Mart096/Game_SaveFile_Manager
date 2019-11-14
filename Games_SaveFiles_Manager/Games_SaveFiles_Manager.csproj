@@ -55,7 +55,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Profile.cs" />
+    <Compile Include="ViewModels\GameListManagerViewModel.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="AboutWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GameSaveManagementUserControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -74,6 +81,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\Game.cs" />
+    <Compile Include="GameSaveManagementUserControl.xaml.cs">
+      <DependentUpon>GameSaveManagementUserControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GamesListManager.xaml.cs">
       <DependentUpon>GamesListManager.xaml</DependentUpon>
     </Compile>
@@ -81,12 +92,19 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="NavigationView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ProfileManagerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NavigationView.xaml.cs">
+      <DependentUpon>NavigationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ProfileManagerWindow.xaml.cs">
       <DependentUpon>ProfileManagerWindow.xaml</DependentUpon>
     </Compile>
@@ -115,5 +133,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Xml;
 using System.Xml.Linq;
 using System.IO;
+using Games_SaveFiles_Manager.Models;
 
 namespace Games_SaveFiles_Manager
 {
@@ -49,18 +50,18 @@ namespace Games_SaveFiles_Manager
 
                     foreach (var item in query) //adding games to list
                     {
-                        GameItem gi_ob = new GameItem();
-                        gi_ob.game_name = item.Element("Name").Value;/*(from temp_it in item.Descendants()
+                        Game gi_ob = new Game();
+                        gi_ob.Game_name = item.Element("Name").Value;/*(from temp_it in item.Descendants()
                                           select temp_it.Element("Name")).First().ToString();*/
 
-                        gi_ob.save_file_location = item.Element("Save_file_location").Value;/*(from temp_it in item.Descendants()
+                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;/*(from temp_it in item.Descendants()
                                                    select temp_it.Element("Save_file_location")).First().ToString();*/
 
                         string temp_profile_specific_file_storage_method;
                         temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; /*(from temp_it in item.Descendants()
                                                    select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();*/
 
-                        gi_ob.profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
 
                         games_listbox.Items.Add(gi_ob);
                     }
@@ -191,11 +192,11 @@ namespace Games_SaveFiles_Manager
 
                     using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"/*xdoc.BaseUri*/, FileMode.Open, FileAccess.ReadWrite))
                     {
-                        GameItem temp_game_item = (GameItem)games_listbox.SelectedItem;
+                        Game temp_game_item = (Game)games_listbox.SelectedItem;
                         //xdoc.Element("Games_list").Element("Games").Add(new XElement("Game",
                         //new XElement("Id", " "), new XElement("Name", new_game_name_textbox.Text), new XElement("Save_file_location", ""), new XElement("Store_profile_saves_in_app_location", "1")));
                         var query = (from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
-                                    where (string) item.Element("Name").Value == temp_game_item.game_name //create field containing temporary game name or use gameitem fields' values
+                                    where (string) item.Element("Name").Value == temp_game_item.Game_name //create field containing temporary game name or use Game fields' values
                                                 select item).First();
                         query.Element("Name").Value = game_name_textbox.Text;
                         query.Element("Save_file_location").Value = save_file_directory_path_textbox.Text;
@@ -232,7 +233,7 @@ namespace Games_SaveFiles_Manager
 
             //End edit mode
             Toggle_Edit_Mode(false);
-            Load_Selected_Games_Data((GameItem) games_listbox.SelectedItem);
+            Load_Selected_Games_Data((Game) games_listbox.SelectedItem);
         }
 
         private void Cancel_edit_button_Click(object sender, RoutedEventArgs e)
@@ -243,7 +244,7 @@ namespace Games_SaveFiles_Manager
 
         private void Games_listbox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*GameItem temp_obj = (GameItem)games_listbox.SelectedItem;
+            /*Game temp_obj = (Game)games_listbox.SelectedItem;
 
             game_name_textbox.Text = temp_obj.game_name;
             save_file_directory_path_textbox.Text = temp_obj.save_file_location;
@@ -261,22 +262,22 @@ namespace Games_SaveFiles_Manager
                 save_store_decision_radarbox1.IsChecked = true;
             }*/
             if(games_listbox.Items.Count>0)
-            Load_Selected_Games_Data((GameItem) games_listbox.SelectedItem);
+            Load_Selected_Games_Data((Game) games_listbox.SelectedItem);
         }
 
-        private void Load_Selected_Games_Data(GameItem temp_obj)
+        private void Load_Selected_Games_Data(Game temp_obj)
         {
-            //GameItem temp_obj = (GameItem)games_listbox.SelectedItem;
+            //Game temp_obj = (Game)games_listbox.SelectedItem;
             try
             {
-                game_name_textbox.Text = temp_obj.game_name;
-                save_file_directory_path_textbox.Text = temp_obj.save_file_location;
+                game_name_textbox.Text = temp_obj.Game_name;
+                save_file_directory_path_textbox.Text = temp_obj.Save_file_location;
 
-                if (temp_obj.profile_specific_save_file_storage_method == 1)
+                if (temp_obj.Profile_specific_save_file_storage_method == 1)
                 {
                     save_store_decision_radarbox1.IsChecked = true;
                 }
-                else if (temp_obj.profile_specific_save_file_storage_method == 2)
+                else if (temp_obj.Profile_specific_save_file_storage_method == 2)
                 {
                     save_store_decision_radarbox2.IsChecked = true;
                 }
@@ -300,7 +301,7 @@ namespace Games_SaveFiles_Manager
         }
     }
 
-    /*class GameItem
+    /*class Game
     {
         public string game_name { get; set; }
         public string save_file_location { get; set; }

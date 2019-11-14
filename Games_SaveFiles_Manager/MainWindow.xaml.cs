@@ -14,6 +14,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using Games_SaveFiles_Manager.Models;
+using Games_SaveFiles_Manager.ViewModels;
 
 namespace Games_SaveFiles_Manager
 {
@@ -22,13 +24,14 @@ namespace Games_SaveFiles_Manager
     /// </summary>
     public partial class MainWindow : Window
     {
+
         public MainWindow()
         {
             InitializeComponent();
-            Load_Games_List();
+            //Load_Games_List();
         }
 
-        private void Load_Games_List() //this method should be availabale in the main window
+        /*private void Load_Games_List() //this method should be availabale in the main window
         {
             try
             {
@@ -44,18 +47,21 @@ namespace Games_SaveFiles_Manager
 
                     foreach (var item in query) //adding games to list
                     {
-                        GameItem gi_ob = new GameItem();
-                        gi_ob.game_name = item.Element("Name").Value;/*(from temp_it in item.Descendants()
-                                          select temp_it.Element("Name")).First().ToString();*/
+                        Game gi_ob = new Game();
+                        gi_ob.Game_name = item.Element("Name").Value;
+                        //(from temp_it in item.Descendants()
+                        //                  select temp_it.Element("Name")).First().ToString();
 
-                        gi_ob.save_file_location = item.Element("Save_file_location").Value;/*(from temp_it in item.Descendants()
-                                                   select temp_it.Element("Save_file_location")).First().ToString();*/
+                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;
+                                            //(from temp_it in item.Descendants()
+                                            //       select temp_it.Element("Save_file_location")).First().ToString();
 
                         string temp_profile_specific_file_storage_method;
-                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; /*(from temp_it in item.Descendants()
-                                                   select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();*/
+                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; 
+                                                   // (from temp_it in item.Descendants()
+                                                   //select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();
 
-                        gi_ob.profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
 
                         games_listbox.Items.Add(gi_ob);
                     }
@@ -78,11 +84,6 @@ namespace Games_SaveFiles_Manager
             {
 
             }
-        }
-
-        /*private void MenuItem_Click(object sender, RoutedEventArgs e)
-        {
-
         }*/
 
         private void Menu_about_button_Click(object sender, RoutedEventArgs e)
@@ -118,10 +119,4 @@ namespace Games_SaveFiles_Manager
         }
     }
 
-    class GameItem
-    {
-        public string game_name { get; set; }
-        public string save_file_location { get; set; }
-        public int profile_specific_save_file_storage_method { get; set; }
-    }
 }
