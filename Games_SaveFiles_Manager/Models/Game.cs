@@ -28,6 +28,16 @@ namespace Games_SaveFiles_Manager.Models
             profile_specific_save_file_storage_method = -1;
         }
 
+        public Game(Game game)
+        {
+            if (game != null)
+            {
+                Game_name = game.Game_name;
+                Save_file_location = game.Save_file_location;
+                Profile_specific_save_file_storage_method = game.Profile_specific_save_file_storage_method;
+            }
+        }
+
         public Game(string new_game_name, string new_game_save_file_location, int new_game_save_file_storage_method)
         {
             Game_name = new_game_name;

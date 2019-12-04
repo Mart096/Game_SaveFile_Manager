@@ -159,6 +159,15 @@ namespace Games_SaveFiles_Manager.ViewModels
              {
 
              }
+            catch (System.Xml.XmlException)
+            {
+                //create new "games_list.xml" file
+                XDeclaration decl = new XDeclaration("1.0", "UTF-8", "no");
+                XElement root = new XElement("Games_list",
+                    new XElement("Games"));
+                XDocument xdoc = new XDocument(decl, root);
+                xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
+            }
          }
 
             protected void OnPropertyChange(string propertyName)

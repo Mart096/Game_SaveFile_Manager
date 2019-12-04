@@ -55,7 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoolToNegativeBoolConverter.cs" />
+    <Compile Include="BoolToVisibilityConverter.cs" />
+    <Compile Include="CommandHandler.cs" />
     <Compile Include="Models\Profile.cs" />
+    <Compile Include="SaveStoreDecisionToBoolConverter.cs" />
     <Compile Include="ViewModels\GameListManagerViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
     <Page Include="AboutWindow.xaml">
