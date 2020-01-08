@@ -21,8 +21,9 @@ namespace Games_SaveFiles_Manager.ViewModels
         private Game tempSelectedGameData;
         private string newGameName = "";
         private bool editMode = false;
-        private bool saveFileMode1 = true; //this implementation is wrong. RadioButton property IsCheked does not update.
-        private bool saveFileMode2 = false;
+        private string applicationDataFilePath;
+        //private bool saveFileMode1 = true; //this implementation is wrong. RadioButton property IsCheked does not update.
+        //private bool saveFileMode2 = false;
         //private ObservableCollection<string> saveFileMode_list = new ObservableCollection<string>();
 
 
@@ -60,19 +61,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                 if (selectedGame != value)
                 {
                     selectedGame = value;
-                    /*if (selectedGame != null)
-                    {
-                        if (selectedGame.Profile_specific_save_file_storage_method == 2)
-                        {
-                            //saveFileMode1 = false;
-                            saveFileMode2 = true;
-                        }
-                        else
-                        {
-                            saveFileMode1 = true;
-                            //saveFileMode2 = false;
-                        }
-                    }*/
                     OnPropertyChange("SelectedGame");
                 }
             }
@@ -111,40 +99,39 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
-        public bool SaveFileMode1
-        {
-            get
+        //public bool SaveFileMode1
+        //{
+        //    get
 
-            {
-                return saveFileMode1;
-            }
-            set
-            {
-                if (saveFileMode1 != value)
-                {
-                    saveFileMode1 = value;
-                    OnPropertyChange("SaveFileMode1");
-                }
-            }
-        }
-
+        //    {
+        //        return saveFileMode1;
+        //    }
+        //    set
+        //    {
+        //        if (saveFileMode1 != value)
+        //        {
+        //            saveFileMode1 = value;
+        //            OnPropertyChange("SaveFileMode1");
+        //        }
+        //    }
+        //}
             
-        public bool SaveFileMode2
-        {
-            get
+        //public bool SaveFileMode2
+        //{
+        //    get
 
-            {
-                return saveFileMode2;
-            }
-            set
-            {
-                if (saveFileMode2 != value)
-                {
-                    saveFileMode2 = value;
-                    OnPropertyChange("SaveFileMode2");
-                }
-            }
-        }
+        //    {
+        //        return saveFileMode2;
+        //    }
+        //    set
+        //    {
+        //        if (saveFileMode2 != value)
+        //        {
+        //            saveFileMode2 = value;
+        //            OnPropertyChange("SaveFileMode2");
+        //        }
+        //    }
+        //}
 
         /*public ObservableCollection<string> SaveFileMode_list
         {
@@ -231,9 +218,8 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         internal GameListManagerViewModel()
         {
-            Load_Games_List();
-            //SaveFileMode_list.Add("option1");
-            //SaveFileMode_list.Add("option2");
+            //Load_Games_List();
+            LoadApplicationData(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
         }
         #endregion
 
@@ -265,7 +251,61 @@ namespace Games_SaveFiles_Manager.ViewModels
                     //FileStream fs = new FileStream(xdoc.BaseUri, FileMode.Open, FileAccess.Read);
 
                     //reminder: games_list.xml construction: Games_list->Games->Game->Id|Name|Save_file_location|Store_profile_saves_in_app_location|
-                    var query = from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
+                    var query = from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                select item;
+
+                    foreach (var item in query) //adding games to list
+                    {
+                        Game gi_ob = new Game();
+                        gi_ob.Game_name = item.Element("Name").Value;/*(from temp_it in item.Descendants()
+                                          select temp_it.Element("Name")).First().ToString();*/
+
+                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;/*(from temp_it in item.Descendants()
+                                                   select temp_it.Element("Save_file_location")).First().ToString();*/
+
+                        string temp_profile_specific_file_storage_method;
+                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; /*(from temp_it in item.Descendants()
+                                                   select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();*/
+
+                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+
+                        //games_listbox.Items.Add(gi_ob);
+                        Games.Add(gi_ob);
+                    }
+                }
+                else
+                {
+                    FileNotFoundMethod(applicationDataFilePath);
+                }
+            }
+            catch (FileNotFoundException ex)
+            {
+
+            }
+            catch (FileLoadException ex)
+            {
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to load games' list. " + ex.Message);
+            }
+        }
+
+        private void LoadApplicationData(string path)
+        {
+            Games.Clear(); //games_listbox.Items.Clear();
+            try
+            {
+                applicationDataFilePath = path;
+                //Try to load file in xml extension, with list of games
+                if (File.Exists(applicationDataFilePath))
+                {
+                    XDocument xdoc = XDocument.Load(applicationDataFilePath);
+                    //FileStream fs = new FileStream(xdoc.BaseUri, FileMode.Open, FileAccess.Read);
+
+                    //reminder: games_list.xml construction: Games_list->Games->Game->Id|Name|Save_file_location|Store_profile_saves_in_app_location|
+                    var query = from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
                                 select item;
 
                     foreach (var item in query) //adding games to list
@@ -290,11 +330,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 else
                 {
                     //create new "games_list.xml" file
-                    XDeclaration decl = new XDeclaration("1.0", "UTF-8", "no");
-                    XElement root = new XElement("Games_list",
-                        new XElement("Games"));
-                    XDocument xdoc = new XDocument(decl, root);
-                    xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
+                    FileNotFoundMethod(applicationDataFilePath);
                 }
             }
             catch (FileNotFoundException ex)
@@ -315,19 +351,19 @@ namespace Games_SaveFiles_Manager.ViewModels
         {
             try
             {
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"))
+                if (File.Exists(applicationDataFilePath))
                 {
-                    string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "games_list.xml";
-                    XDocument xdoc = XDocument.Load(path_to_config/*AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"*/, LoadOptions.SetBaseUri);
+                    //string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "games_list.xml";
+                    XDocument xdoc = XDocument.Load(applicationDataFilePath, LoadOptions.SetBaseUri);
 
-                    int query = (from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
+                    int query = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
                                  where item.Element("Name").Value == NewGameName
                                  select item).Count(); //get number of added games
 
                     if (query == 0) //there are no games with such name. Duplicate games prevention measure.
-                        using (FileStream fs = new FileStream(path_to_config, FileMode.Open, FileAccess.ReadWrite))
+                        using (FileStream fs = new FileStream(applicationDataFilePath, FileMode.Open, FileAccess.ReadWrite))
                         {
-                            xdoc.Element("Games_list").Element("Games").Add(new XElement("Game",
+                            xdoc.Element("Game_save_file_manager").Element("Games").Add(new XElement("Game",
                                 new XElement("Id", " "), new XElement("Name", NewGameName), new XElement("Save_file_location", ""), new XElement("Store_profile_saves_in_app_location", "1")));
                             xdoc.Save(fs);
                             fs.Close();
@@ -356,7 +392,8 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
             finally
             {
-                Load_Games_List();
+                //Load_Games_List();
+                LoadApplicationData(applicationDataFilePath);
             }
         }
 
@@ -365,13 +402,13 @@ namespace Games_SaveFiles_Manager.ViewModels
             //Make changes to game selected from list
             try
             {
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"))
+                if (File.Exists(applicationDataFilePath))
                 {
                     //double stream to one file might cause unpredictable behavior. Close filestream as soon as you load data.
 
-                    XDocument xdoc = new XDocument();//XDocument.Load(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml", LoadOptions.SetBaseUri);
+                    XDocument xdoc = new XDocument();//XDocument.Load(applicationDataFilePath, LoadOptions.SetBaseUri);
 
-                    using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"/*xdoc.BaseUri*/, FileMode.Open, FileAccess.Read))
+                    using (FileStream fs = new FileStream(applicationDataFilePath/*xdoc.BaseUri*/, FileMode.Open, FileAccess.Read))
                     {
                         xdoc = XDocument.Load(fs);
                     }
@@ -379,7 +416,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     Game temp_game_item = tempSelectedGameData;
                     //xdoc.Element("Games_list").Element("Games").Add(new XElement("Game",
                     //new XElement("Id", " "), new XElement("Name", new_game_name_textbox.Text), new XElement("Save_file_location", ""), new XElement("Store_profile_saves_in_app_location", "1")));
-                    var query = (from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
+                    var query = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
                                  where (string)item.Element("Name").Value == temp_game_item.Game_name //create field containing temporary game name or use Game fields' values
                                  select item).First();
                     query.Element("Name").Value = SelectedGame.Game_name; //game_name_textbox.Text;
@@ -397,7 +434,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                     query.Element("Store_profile_saves_in_app_location").Value = SelectedGame.Profile_specific_save_file_storage_method.ToString();
 
-                    xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
+                    xdoc.Save(applicationDataFilePath);
                 }
                 else
                 {
@@ -440,7 +477,19 @@ namespace Games_SaveFiles_Manager.ViewModels
         private void Deactivate_Edit_Mode()
         {
             EditMode = false;
-            Load_Games_List();
+            //Load_Games_List();
+            LoadApplicationData(applicationDataFilePath);
+        }
+
+        private void FileNotFoundMethod(string path)
+        {
+            XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "no");
+            //XElement root = new XElement("Profiles_list", new XElement("Profiles"));
+            XElement root = new XElement("Game_save_file_manager", new XElement("Profiles", new XElement("Profile",
+                new XElement("Name", "default"), new XElement("Creation_date", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")))),
+                new XElement("Games"));
+            XDocument xdoc = new XDocument(declaration, root);
+            xdoc.Save(path);
         }
 
         //private void Load_Selected_Games_Data(Game temp_obj)

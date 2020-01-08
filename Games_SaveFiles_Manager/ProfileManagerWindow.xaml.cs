@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Games_SaveFiles_Manager.ViewModels;
 
 namespace Games_SaveFiles_Manager
 {
@@ -19,9 +20,13 @@ namespace Games_SaveFiles_Manager
     /// </summary>
     public partial class ProfileManagerWindow : Window
     {
+        ProfileManagerViewModel viewModel;
+
         public ProfileManagerWindow()
         {
             InitializeComponent();
+            viewModel = new ProfileManagerViewModel();
+            this.DataContext = viewModel;
         }
     }
 }

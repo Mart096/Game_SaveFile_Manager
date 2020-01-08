@@ -115,7 +115,8 @@ namespace Games_SaveFiles_Manager
 
         private void Manage_Profiles_List_Click(object sender, RoutedEventArgs e)
         {
-
+            ProfileManagerWindow profile_manager = new ProfileManagerWindow();
+            profile_manager.ShowDialog();
         }
     }
 

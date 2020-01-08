@@ -12,6 +12,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -24,7 +25,7 @@
 
         <Label Content="Profile" HorizontalAlignment="Left" VerticalAlignment="Top"/>
         <Label Content="Game" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1"/>
-        <ListBox Name="profile_listbox"  Grid.Row="1" Grid.RowSpan="2" Margin="5, 0, 5, 5" HorizontalAlignment="Left" Width="100" ItemsSource="{Binding Profiles}">
+        <ListBox Name="profile_listbox"  Grid.Row="1" Grid.RowSpan="3" Margin="5, 0, 5, 5" HorizontalAlignment="Left" Width="100" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -33,7 +34,7 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <ListBox Name="games_listbox" Grid.Row="1" Grid.RowSpan="2" Margin="5, 0, 5, 5" HorizontalAlignment="Left" Width="190" Grid.Column="1" ItemsSource="{Binding Games}">
+        <ListBox Name="games_listbox" Grid.Row="1" Grid.RowSpan="3" Margin="5, 0, 5, 5" HorizontalAlignment="Left" Width="190" Grid.Column="1" ItemsSource="{Binding Games}" SelectedItem="{Binding SelectedGame}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -44,14 +45,26 @@
         </ListBox>
 
         <Label Content="Save file directory" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="2"/>
-        <TextBox Name="game_saves_directory" Grid.Row="1" Height="25" Grid.Column="2" Text="{Binding SelectedGame.Game_name}"/>
-        <StackPanel Grid.Row="2" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="ChangeSaveFileDirectory_Button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Right" Width="100" Height="36" Margin="5, 0, 5, 5" VerticalAlignment="Bottom">
-                <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="96">
-                Change save file's directory
-                </TextBlock>
+        <TextBox Name="game_saves_directory" IsReadOnly="True" Grid.Row="1" Height="25" Grid.Column="2" Text="{Binding SelectedGame.Save_file_location}"/>
+
+        <StackPanel Grid.Column="3" Grid.Row="2" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Current profile:"/>
+                <TextBlock Text="{Binding SelectedProfile.Profile_name}" Margin="5, 5, 0, 0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Selected game:" />
+                <TextBlock Text="{Binding SelectedGame.Game_name}" Margin="5, 5, 0 , 0" />
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="ChangeSaveFileDirectory_Button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Right" Width="100" Height="36" Margin="5, 0, 5, 5" VerticalAlignment="Bottom" Command="{Binding VerifySaveFilePathCommand}">
+                <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="96" Text="Verify save file directory"/>
             </Button>
-            <Button Name="apply_profile_button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Content="Apply profile" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="80" Margin="5, 0, 5, 5"/>
+            <Button Name="apply_profile_button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="100" Margin="5, 0, 5, 5" Command="{Binding ApplyProfileCommand}">
+                <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Text="Apply profile for selected game"/>
+            </Button>
         </StackPanel>
     </Grid>
 </UserControl>

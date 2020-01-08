@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 
@@ -20,6 +22,8 @@ namespace Games_SaveFiles_Manager.ViewModels
         private Game selectedGame;
         private Profile selectedProfile;
         private ICommand _getCommand;
+        private ICommand _applyProfileCommand;
+        private ICommand _verifySaveFilePathCommand;
         #endregion
 
         #region Properties
@@ -86,6 +90,33 @@ namespace Games_SaveFiles_Manager.ViewModels
                 }
             }
         }
+
+        public ICommand ApplyProfileCommand
+        {
+            get
+            {
+                if(_applyProfileCommand == null)
+                {
+                    _applyProfileCommand = new CommandHandler(
+                        param => ApplyProfile());
+                }
+                return _applyProfileCommand;
+            }
+        }
+
+        public ICommand VerifySaveFilePathCommand
+        {
+            get
+            {
+                if( _verifySaveFilePathCommand == null)
+                {
+                    _verifySaveFilePathCommand = new CommandHandler(
+                        param=> VerifySaveFilePath());
+                }
+                return _verifySaveFilePathCommand;
+            }
+        }
+
         #endregion
 
         #region Events
@@ -98,14 +129,16 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         public MainWindowViewModel()
         {
-            Load_Games_List();
-            Load_Profiles_List();
+            //Load_Games_List();
+            //Load_Profiles_List();
+            Load_Application_Data();
         }
 
         #endregion
 
         #region Methods
 
+        //this method has been retired from use
         private void Load_Games_List() //this method should be availabale in the main window
         {
             try
@@ -120,26 +153,28 @@ namespace Games_SaveFiles_Manager.ViewModels
                      var query = from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
                                  select item;
 
-                     foreach (var item in query) //adding games to list
-                     {
-                         Game gi_ob = new Game();
-                         gi_ob.Game_name = item.Element("Name").Value;
-                         //(from temp_it in item.Descendants()
-                         //                  select temp_it.Element("Name")).First().ToString();
+                    foreach (var item in query) //adding games to list
+                    {
+                        Game gi_ob = new Game();
+                        gi_ob.Game_name = item.Element("Name").Value;
+                        //(from temp_it in item.Descendants()
+                        //                  select temp_it.Element("Name")).First().ToString();
 
-                         gi_ob.Save_file_location = item.Element("Save_file_location").Value;
-                                             //(from temp_it in item.Descendants()
-                                             //       select temp_it.Element("Save_file_location")).First().ToString();
+                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;
+                        //(from temp_it in item.Descendants()
+                        //       select temp_it.Element("Save_file_location")).First().ToString();
 
-                         string temp_profile_specific_file_storage_method;
-                         temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; 
-                                                    // (from temp_it in item.Descendants()
-                                                    //select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();
+                        string temp_profile_specific_file_storage_method;
+                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value;
+                        // (from temp_it in item.Descendants()
+                        //select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();
 
-                         gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
 
-                         Games.Add(gi_ob);
-                     }
+                        gi_ob.Profile_used = item.Element("Profile_used").Value;
+
+                        Games.Add(gi_ob);
+                    }
                  }
                  else
                  {
@@ -170,7 +205,7 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
          }
 
-            protected void OnPropertyChange(string propertyName)
+        protected void OnPropertyChange(string propertyName)
         {
             if (PropertyChanged != null)
             {
@@ -178,9 +213,145 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
+        //this method has been retired from use
         private void Load_Profiles_List()
         {
-            //throw new NotImplementedException();
+            try
+            {
+                Profiles.Clear();
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml"))
+                {
+                    string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml";
+                    XDocument xdoc = XDocument.Load(path_to_config, LoadOptions.SetBaseUri);
+
+                    var query = (from items in xdoc.Element("Profiles_list").Element("Profiles").Elements("Profile")
+                                 select items);
+
+                    foreach (var item in query)
+                    {
+                        string pattern = "dd.MM.yyyy HH:mm:ss";
+                        DateTime temp_creation_date;
+
+                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out temp_creation_date))
+                        {
+                            //successful
+                            Profile loaded_profile = new Profile();
+                            loaded_profile.Profile_name = item.Element("Name").Value;
+                            loaded_profile.Creation_time = temp_creation_date;
+
+                            Profiles.Add(loaded_profile);
+                        }
+                        else
+                        {
+                            //failure
+
+                        }
+                    }
+
+                }
+                else //file containing list of profiles was not found and will be created instead
+                {
+                    XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "no");
+                    XElement root = new XElement("Profiles_list", new XElement("Profiles"));
+                    XDocument xdoc = new XDocument(declaration, root);
+                    xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml");
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void Load_Application_Data()
+        {
+            try
+            {
+                Profiles.Clear();
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml"))
+                {
+                    string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml";
+                    XDocument xdoc = XDocument.Load(path_to_config, LoadOptions.SetBaseUri);
+
+                    var query_profiles = (from items in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile")
+                                 select items);
+
+                    var query_games = (from items in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                       select items);
+
+                    //Put loaded profiles on the list
+                    foreach (var item in query_profiles)
+                    {
+                        string pattern = "dd.MM.yyyy HH:mm:ss";
+                        DateTime temp_creation_date;
+
+                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out temp_creation_date))
+                        {
+                            //successful
+                            Profile loaded_profile = new Profile();
+                            loaded_profile.Profile_name = item.Element("Name").Value;
+                            loaded_profile.Creation_time = temp_creation_date;
+
+                            Profiles.Add(loaded_profile);
+                        }
+                        else
+                        {
+                            //failure
+
+                        }
+                    }
+
+                    foreach (var item in query_games) //adding games to list
+                    {
+                        Game gi_ob = new Game();
+                        gi_ob.Game_name = item.Element("Name").Value;
+                        //(from temp_it in item.Descendants()
+                        //                  select temp_it.Element("Name")).First().ToString();
+
+                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;
+                        //(from temp_it in item.Descendants()
+                        //       select temp_it.Element("Save_file_location")).First().ToString();
+
+                        string temp_profile_specific_file_storage_method;
+                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value;
+                        // (from temp_it in item.Descendants()
+                        //select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();
+
+                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+
+                        gi_ob.Profile_used = item.Element("Profile_used").Value;
+
+                        Games.Add(gi_ob);
+                    }
+
+                }
+                else //file containing application data was not found and will be created instead
+                {
+                    XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "no");
+                    //XElement root = new XElement("Profiles_list", new XElement("Profiles"));
+                    XElement root = new XElement("Game_save_file_manager", new XElement("Profiles", new XElement("Profile", 
+                        new XElement("Name", "default"), new XElement("Creation_date", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")))), 
+                        new XElement("Games"));
+                    XDocument xdoc = new XDocument(declaration, root);
+                    xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
+
+                    Load_Application_Data();
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void ApplyProfile()
+        {
+            MessageBox.Show("Approved");
+        }
+
+        public void VerifySaveFilePath()
+        {
+
         }
         #endregion
     }

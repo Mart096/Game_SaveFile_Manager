@@ -19,13 +19,13 @@ namespace Games_SaveFiles_Manager.Models
         #endregion
 
         #region Constructors
-        Profile()
+        public Profile()
         {
             Profile_name = "Unspecified";
             Creation_time = DateTime.Now;
         }
 
-        Profile(string new_name)
+        public Profile(string new_name)
         {
             Profile_name = new_name;
             Creation_time = DateTime.Now;
