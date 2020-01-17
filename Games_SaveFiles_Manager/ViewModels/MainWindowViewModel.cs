@@ -268,6 +268,7 @@ namespace Games_SaveFiles_Manager.ViewModels
             try
             {
                 Profiles.Clear();
+                Games.Clear();
                 if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml"))
                 {
                     string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml";
@@ -347,11 +348,125 @@ namespace Games_SaveFiles_Manager.ViewModels
         public void ApplyProfile()
         {
             MessageBox.Show("Approved");
-        }
+
+            //1. Copy current save file to currently selected profile
+            //2. Change current profile to profile selected from the list
+            //3. Import save game to game's save file directory from profile's directory
+
+            string temp_path = SelectedGame.Save_file_location;
+            string previous_profile_name = SelectedGame.Profile_used;
+            int method = SelectedGame.Profile_specific_save_file_storage_method;
+
+            try
+            {
+                if (!(SelectedProfile.Profile_name.Equals(previous_profile_name)))
+                {
+                    XDocument xdoc = new XDocument();
+
+                    if (Directory.Exists(temp_path))
+                    {
+                        if (method == 1) //1st method
+                        {
+                            var files_in_directory = Directory.GetFiles(temp_path);
+                            string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
+
+                            //copy save game files of current profile to profile directory
+                            foreach (string file in files_in_directory)
+                            {
+                                File.Copy(file, temp_path + "\\..\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
+                            }
+
+                            //copy save game files of another profile to game's save file directory
+                            foreach (string file in files_in_selected_profile_directory)
+                            {
+                                File.Copy(file, temp_path + "\\" + Path.GetFileName(file), true);
+                            }
+
+                            //make changes in app's config file
+                            using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                            {
+                                xdoc = XDocument.Load(fs);
+                            }
+
+                            XElement edited_game = (from games in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                                    where (string)games.Element("Name").Value == SelectedGame.Game_name
+                                                    select games).First();
+
+                            edited_game.Element("Profile_used").Value = SelectedProfile.Profile_name;
+
+                            xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
+
+                        }
+                        else //2nd method
+                        {
+
+                        }
+                    }
+                    else
+                    {
+                        //it doesn't exist
+                        MessageBox.Show("Save file directory doesn\'t exist!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("This profile is already activated!");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error!" + ex.Message, "Error");
+            }
+            finally
+            {
+                
+                Load_Application_Data();
+            }
+    }
 
         public void VerifySaveFilePath()
         {
+            string temp_path = SelectedGame.Save_file_location;
+            int method = SelectedGame.Profile_specific_save_file_storage_method;
 
+            try
+            {
+                XDocument xdoc = new XDocument();
+
+                //check if given path exists and doesn't collide with other games
+                if (Directory.Exists(temp_path))
+                {
+                    using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory+"game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                    {
+                        xdoc = XDocument.Load(fs);
+                    }
+
+                    var profiles_query = (from items in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile") select items);
+
+                    foreach (var item in profiles_query)
+                    {
+                        string new_directory_path = temp_path + "\\..\\" + item.Element("Name").Value;
+                        if (!(Directory.Exists(new_directory_path) == true))
+                        {
+                            //create directory for specified profile
+                            Directory.CreateDirectory(new_directory_path);
+                            if (item.Element("Name").Value.Equals("default"))
+                            {
+                                //copy current save files to default's profile directory
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //it doesn't exist
+                    MessageBox.Show("Save file directory doesn\'t exist!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error!" + ex.Message, "Error");
+            }
         }
         #endregion
     }

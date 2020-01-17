@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Games_SaveFiles_Manager"
         mc:Ignorable="d"
-        Title="Games list manager" Height="427" Width="507" MinHeight="427" MinWidth="507">
+        Title="Games list manager" Height="427" Width="520" MinHeight="427" MinWidth="520">
     <Window.Resources>
         <local:BoolToNegativeBoolConverter x:Key="BoolToNegBoolConv"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisConv"/>
@@ -35,8 +35,8 @@
 
 
 
-        <RadioButton Name="save_store_decision_radarbox1" Content="Store profile's save files in application's directory" HorizontalAlignment="Left" Margin="206,139,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=appdir}"/>
-        <RadioButton Name="save_store_decision_radarbox2" Content="Keep profile's save files in the same directory" HorizontalAlignment="Left" Margin="206,159,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=local}"/>
+        <RadioButton Name="save_store_decision_radarbox1" Content="Store profile's save files in game save files' directory" HorizontalAlignment="Left" Margin="206,139,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=appdir}"/>
+        <RadioButton Name="save_store_decision_radarbox2" Content="Keep profile's save files in the manager's directory" HorizontalAlignment="Left" Margin="206,159,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=local}"/>
         <!--<ListBox ItemsSource="{Binding }" Margin="371,179,18,93" >
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
