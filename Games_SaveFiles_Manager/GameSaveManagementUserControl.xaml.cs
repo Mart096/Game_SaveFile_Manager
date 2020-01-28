@@ -22,11 +22,11 @@ namespace Games_SaveFiles_Manager
     public partial class GameSaveManagementUserControl : UserControl
     {
 
-        private MainWindowViewModel viewModel;
+        private ManagerWindowViewModel viewModel;
 
         public GameSaveManagementUserControl()
         {
-            viewModel = new MainWindowViewModel();
+            viewModel = new ManagerWindowViewModel();
             this.DataContext = viewModel;
             InitializeComponent();
         }

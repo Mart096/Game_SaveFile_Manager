@@ -278,14 +278,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                     FileNotFoundMethod(applicationDataFilePath);
                 }
             }
-            catch (FileNotFoundException ex)
-            {
-
-            }
-            catch (FileLoadException ex)
-            {
-
-            }
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to load games' list. " + ex.Message);
@@ -333,14 +325,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                     FileNotFoundMethod(applicationDataFilePath);
                 }
             }
-            catch (FileNotFoundException ex)
-            {
-
-            }
-            catch (FileLoadException ex)
-            {
-
-            }
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to load games' list. " + ex.Message);
@@ -377,14 +361,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                 {
                     //Warning
                 }
-            }
-            catch (FileNotFoundException ex)
-            {
-
-            }
-            catch (FileLoadException ex)
-            {
-
             }
             catch (Exception ex)
             {
@@ -440,14 +416,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                 {
                     //Warning
                 }
-            }
-            catch (FileNotFoundException ex)
-            {
-
-            }
-            catch (FileLoadException ex)
-            {
-
             }
             catch (Exception ex)
             {

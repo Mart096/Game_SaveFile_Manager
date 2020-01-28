@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Games_SaveFiles_Manager"
         mc:Ignorable="d"
-        Title="Profile management" Height="356.676" Width="286.08">
+        Title="Profile management" Height="356.676" Width="286.08" MinHeight="365" MinWidth="286">
 
     <Window.Resources>
         <local:BoolToNegativeBoolConverter x:Key="BoolToNegativeConverter"/>

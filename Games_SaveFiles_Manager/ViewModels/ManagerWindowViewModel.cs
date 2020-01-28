@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Xml.Linq;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
-    class MainWindowViewModel : INotifyPropertyChanged
+    class ManagerWindowViewModel : INotifyPropertyChanged
     {
         #region Fields
         private ObservableCollection<Game> games = new ObservableCollection<Game>();
@@ -127,7 +128,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         #region Constructors
 
-        public MainWindowViewModel()
+        public ManagerWindowViewModel()
         {
             //Load_Games_List();
             //Load_Profiles_List();
@@ -155,12 +156,14 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                     foreach (var item in query) //adding games to list
                     {
-                        Game gi_ob = new Game();
-                        gi_ob.Game_name = item.Element("Name").Value;
-                        //(from temp_it in item.Descendants()
-                        //                  select temp_it.Element("Name")).First().ToString();
+                        Game gi_ob = new Game
+                        {
+                            Game_name = item.Element("Name").Value,
+                            //(from temp_it in item.Descendants()
+                            //                  select temp_it.Element("Name")).First().ToString();
 
-                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;
+                            Save_file_location = item.Element("Save_file_location").Value
+                        };
                         //(from temp_it in item.Descendants()
                         //       select temp_it.Element("Save_file_location")).First().ToString();
 
@@ -185,15 +188,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                      XDocument xdoc = new XDocument(decl, root);
                      xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
                  }
-             }
-             catch (FileNotFoundException ex)
-             {
-
-             }
-             catch (FileLoadException ex)
-             {
-
-             }
+            }
             catch (System.Xml.XmlException)
             {
                 //create new "games_list.xml" file
@@ -230,14 +225,15 @@ namespace Games_SaveFiles_Manager.ViewModels
                     foreach (var item in query)
                     {
                         string pattern = "dd.MM.yyyy HH:mm:ss";
-                        DateTime temp_creation_date;
 
-                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out temp_creation_date))
+                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime temp_creation_date))
                         {
                             //successful
-                            Profile loaded_profile = new Profile();
-                            loaded_profile.Profile_name = item.Element("Name").Value;
-                            loaded_profile.Creation_time = temp_creation_date;
+                            Profile loaded_profile = new Profile
+                            {
+                                Profile_name = item.Element("Name").Value,
+                                Creation_time = temp_creation_date
+                            };
 
                             Profiles.Add(loaded_profile);
                         }
@@ -284,14 +280,15 @@ namespace Games_SaveFiles_Manager.ViewModels
                     foreach (var item in query_profiles)
                     {
                         string pattern = "dd.MM.yyyy HH:mm:ss";
-                        DateTime temp_creation_date;
 
-                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out temp_creation_date))
+                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime temp_creation_date))
                         {
                             //successful
-                            Profile loaded_profile = new Profile();
-                            loaded_profile.Profile_name = item.Element("Name").Value;
-                            loaded_profile.Creation_time = temp_creation_date;
+                            Profile loaded_profile = new Profile
+                            {
+                                Profile_name = item.Element("Name").Value,
+                                Creation_time = temp_creation_date
+                            };
 
                             Profiles.Add(loaded_profile);
                         }
@@ -304,12 +301,14 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                     foreach (var item in query_games) //adding games to list
                     {
-                        Game gi_ob = new Game();
-                        gi_ob.Game_name = item.Element("Name").Value;
-                        //(from temp_it in item.Descendants()
-                        //                  select temp_it.Element("Name")).First().ToString();
+                        Game gi_ob = new Game
+                        {
+                            Game_name = item.Element("Name").Value,
+                            //(from temp_it in item.Descendants()
+                            //                  select temp_it.Element("Name")).First().ToString();
 
-                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;
+                            Save_file_location = item.Element("Save_file_location").Value
+                        };
                         //(from temp_it in item.Descendants()
                         //       select temp_it.Element("Save_file_location")).First().ToString();
 
@@ -347,7 +346,8 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         public void ApplyProfile()
         {
-            MessageBox.Show("Approved");
+            //MessageBox.Show("Approved");
+            Debug.Print("Profile change initiated");
 
             //1. Copy current save file to currently selected profile
             //2. Change current profile to profile selected from the list
@@ -359,7 +359,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
             try
             {
-                if (!(SelectedProfile.Profile_name.Equals(previous_profile_name)))
+                if (!(SelectedProfile.Profile_name.Equals(previous_profile_name)) && VerifySaveFilePath()==true)
                 {
                     XDocument xdoc = new XDocument();
 
@@ -368,12 +368,14 @@ namespace Games_SaveFiles_Manager.ViewModels
                         if (method == 1) //1st method
                         {
                             var files_in_directory = Directory.GetFiles(temp_path);
-                            string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
+                            //string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
+                            string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + "_managerprofiles\\" + SelectedProfile.Profile_name);
 
                             //copy save game files of current profile to profile directory
                             foreach (string file in files_in_directory)
                             {
-                                File.Copy(file, temp_path + "\\..\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
+                                //File.Copy(file, temp_path + "\\..\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
+                                File.Copy(file, temp_path + "\\..\\" + "_managerprofiles\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
                             }
 
                             //copy save game files of another profile to game's save file directory
@@ -424,9 +426,12 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
     }
 
-        public void VerifySaveFilePath()
+        public bool VerifySaveFilePath()
         {
+            Debug.Print("Game's save file location verifiaction initiated!\n");
+
             string temp_path = SelectedGame.Save_file_location;
+            string game_name = SelectedGame.Game_name;
             int method = SelectedGame.Profile_specific_save_file_storage_method;
 
             try
@@ -442,31 +447,72 @@ namespace Games_SaveFiles_Manager.ViewModels
                     }
 
                     var profiles_query = (from items in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile") select items);
+                    int save_file_directory_count = (from items in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                                     where items.Element("Save_file_location").Value.ToString() == temp_path
+                                                     select items).Count();
 
-                    foreach (var item in profiles_query)
+                    if (save_file_directory_count <= 1)
                     {
-                        string new_directory_path = temp_path + "\\..\\" + item.Element("Name").Value;
-                        if (!(Directory.Exists(new_directory_path) == true))
+                        foreach (var item in profiles_query)
                         {
-                            //create directory for specified profile
-                            Directory.CreateDirectory(new_directory_path);
-                            if (item.Element("Name").Value.Equals("default"))
+                            string new_directory_path; //= temp_path + "\\..\\" + item.Element("Name").Value;
+
+                            if (method == 1)
                             {
-                                //copy current save files to default's profile directory
+                                if (!(Directory.Exists(temp_path + "\\..\\" + "_managerprofiles\\")))
+                                {
+                                    string new_path = temp_path + "\\..\\" + "_managerprofiles";
+                                    Directory.CreateDirectory(new_path);
+                                }
+                                new_directory_path = temp_path + "\\..\\" + "_managerprofiles\\" + item.Element("Name").Value;
                             }
+                            else
+                            {
+                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\games\\")))
+                                {
+                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\games\\");
+                                }
+                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name)))
+                                {
+                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name);
+                                }
+
+                                new_directory_path = AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name + "\\" + item;
+                            }
+
+                            if (!(Directory.Exists(new_directory_path) == true))
+                            {
+                                //create directory for specified profile
+                                Directory.CreateDirectory(new_directory_path);
+                                //if (item.Element("Name").Value.Equals("default"))
+                                //{
+                                //    //copy current save files to default's profile directory
+                                //}
+                            }
+
                         }
+                    }
+                    else
+                    {
+                        throw new ProfileChangeFailedException("There are two games with the same save file location.");
                     }
                 }
                 else
                 {
                     //it doesn't exist
-                    MessageBox.Show("Save file directory doesn\'t exist!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    throw new ProfileChangeFailedException("Save file directory doesn\'t exist");
                 }
+            }
+            catch (ProfileChangeFailedException)
+            {
+                //MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Error!" + ex.Message, "Error");
+                return false;
             }
+            return true;
         }
         #endregion
     }

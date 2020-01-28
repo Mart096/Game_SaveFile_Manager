@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -333,14 +334,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                     //Warning
                 }
             }
-            catch (FileNotFoundException ex)
-            {
-
-            }
-            catch (FileLoadException ex)
-            {
-
-            }
             catch (Exception ex)
             {
                 MessageBox.Show("Exception!");
@@ -429,6 +422,10 @@ namespace Games_SaveFiles_Manager.ViewModels
                         xdoc= XDocument.Load(applicationDataFilePath, LoadOptions.SetBaseUri);
                     }
 
+                    //string original_profile_name = (from item in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile")
+                    //                                where item.Element("Creation_date").Value == SelectedProfile.Creation_time.ToString("dd/MM/yyyy HH:mm:ss")
+                    //                                select item).First().Value;
+
                     int query_check_names = (from item in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile")
                                  where item.Element("Name").Value == SelectedProfile.Profile_name
                                  select item).Count(); //get number of profiles with the same name
@@ -438,7 +435,37 @@ namespace Games_SaveFiles_Manager.ViewModels
                         var query = (from item in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile")
                                      where (string)item.Element("Creation_date").Value == SelectedProfile.Creation_time.ToString("dd/MM/yyyy HH:mm:ss")  //create field containing temporary game name or use Game fields' values
                                      select item).First();
-                        query.Element("Name").Value = SelectedProfile.Profile_name; //game_name_textbox.Text;
+
+                        var query_games_save_file_paths = from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                                          select item;
+                        var query_games_with_this_profile_active = from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                                                   where item.Element("Profile_used").Value == query.Element("Name").Value
+                                                                   select item;
+
+                        string original_name = query.Element("Name").Value;
+                        query.Element("Name").Value = SelectedProfile.Profile_name; //replace name of profile with a new one
+
+                        foreach (var item in query_games_save_file_paths)
+                        {
+                            string directory_path="";
+
+                            //change profile's directory name accordingly to used method and changes made to profile
+                            if (Convert.ToInt32(item.Element("Store_profile_saves_in_app_location").Value) == 1)
+                            {
+                                directory_path = item.Element("Save_file_location").Value + "\\..\\" + "_managerprofiles\\";
+                            }
+                            else
+                            {   
+                                directory_path = AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + item.Element("Name").Value+"\\";
+                            }
+                            Debug.Write("Directory path: " + directory_path);
+
+                            if (Directory.Exists(directory_path + original_name))
+                            {
+                                Directory.Move((directory_path + original_name), (directory_path + SelectedProfile.Profile_name));
+                                //Directory.Delete(directory_path + original_name);
+                            }
+                        }
                     }
                     else
                     {
@@ -448,15 +475,14 @@ namespace Games_SaveFiles_Manager.ViewModels
                     xdoc.Save(applicationDataFilePath);
                 }
             }
-            catch
+            catch(Exception ex)
             {
-
+                MessageBox.Show("Error occured!" + ex.Message);
             }
             finally
             {
                 EditModeChange(false);
-                LoadApplicationData(applicationDataFilePath);
-                
+                LoadApplicationData(applicationDataFilePath);   
             }
         }
 

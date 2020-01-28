@@ -59,9 +59,10 @@
     <Compile Include="BoolToVisibilityConverter.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Models\Profile.cs" />
+    <Compile Include="ProfileChangeFailedException.cs" />
     <Compile Include="SaveStoreDecisionToBoolConverter.cs" />
     <Compile Include="ViewModels\GameListManagerViewModel.cs" />
-    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\ManagerWindowViewModel.cs" />
     <Compile Include="ViewModels\ProfileManagerViewModel.cs" />
     <Page Include="AboutWindow.xaml">
       <SubType>Designer</SubType>
