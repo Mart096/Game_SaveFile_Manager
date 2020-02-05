@@ -349,13 +349,13 @@ namespace Games_SaveFiles_Manager.ViewModels
             //MessageBox.Show("Approved");
             Debug.Print("Profile change initiated");
 
-            //1. Copy current save file to currently selected profile
+            //1. Copy current save file to currently active profile
             //2. Change current profile to profile selected from the list
             //3. Import save game to game's save file directory from profile's directory
 
-            string temp_path = SelectedGame.Save_file_location;
-            string previous_profile_name = SelectedGame.Profile_used;
-            int method = SelectedGame.Profile_specific_save_file_storage_method;
+            string temp_path = SelectedGame.Save_file_location; //game save files' directory
+            string previous_profile_name = SelectedGame.Profile_used; //currently active profile for games
+            int method = SelectedGame.Profile_specific_save_file_storage_method; //method chosen for profiles' game save files storage
 
             try
             {
@@ -370,6 +370,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                             var files_in_directory = Directory.GetFiles(temp_path);
                             //string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
                             string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + "_managerprofiles\\" + SelectedProfile.Profile_name);
+                            Debug.Print("Directory to game save files: "+files_in_selected_profile_directory);
 
                             //copy save game files of current profile to profile directory
                             foreach (string file in files_in_directory)
@@ -383,26 +384,41 @@ namespace Games_SaveFiles_Manager.ViewModels
                             {
                                 File.Copy(file, temp_path + "\\" + Path.GetFileName(file), true);
                             }
-
-                            //make changes in app's config file
-                            using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
-                            {
-                                xdoc = XDocument.Load(fs);
-                            }
-
-                            XElement edited_game = (from games in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
-                                                    where (string)games.Element("Name").Value == SelectedGame.Game_name
-                                                    select games).First();
-
-                            edited_game.Element("Profile_used").Value = SelectedProfile.Profile_name;
-
-                            xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
-
                         }
                         else //2nd method
                         {
+                            var files_in_directory = Directory.GetFiles(temp_path);
 
+                            string[] files_in_selected_profile_directory = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name+ "\\" + SelectedProfile.Profile_name);
+                            Debug.Print("Directory path of profile's specific game save files");
+
+                            //copy save game files of current profile to profile directory
+                            foreach (string file in files_in_directory)
+                            {
+                                File.Copy(file, AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
+                                Debug.Print("Copy file: \"" + Path.GetFileName(file) + "\" from " + file + " to " + AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name);
+                            }
+
+                            //copy save game files of another profile to game's save file directory
+                            foreach (string file in files_in_selected_profile_directory)
+                            {
+                                File.Copy(file, temp_path + "\\" + Path.GetFileName(file), true);
+                            }
                         }
+
+                        //make changes in app's config file
+                        using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                        {
+                            xdoc = XDocument.Load(fs);
+                        }
+
+                        XElement edited_game = (from games in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                                                where (string)games.Element("Name").Value == SelectedGame.Game_name
+                                                select games).First();
+
+                        edited_game.Element("Profile_used").Value = SelectedProfile.Profile_name;
+
+                        xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
                     }
                     else
                     {
@@ -468,16 +484,16 @@ namespace Games_SaveFiles_Manager.ViewModels
                             }
                             else
                             {
-                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\games\\")))
+                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\")))
                                 {
-                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\games\\");
+                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "games\\");
                                 }
-                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name)))
+                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name)))
                                 {
-                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name);
+                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name);
                                 }
 
-                                new_directory_path = AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name + "\\" + item;
+                                new_directory_path = AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name + "\\" + item.Element("Name").Value;
                             }
 
                             if (!(Directory.Exists(new_directory_path) == true))
@@ -489,7 +505,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                                 //    //copy current save files to default's profile directory
                                 //}
                             }
-
                         }
                     }
                     else

@@ -64,10 +64,10 @@
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
-            <Button x:Name="ChangeSaveFileDirectory_Button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" Width="100" Height="36" Margin="5, 0, 5, 5" VerticalAlignment="Bottom" Command="{Binding VerifySaveFilePathCommand}">
+            <!--<Button x:Name="ChangeSaveFileDirectory_Button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalContentAlignment="Left" HorizontalAlignment="Left" Width="100" Height="36" Margin="5, 0, 5, 5" VerticalAlignment="Bottom" Command="{Binding VerifySaveFilePathCommand}">
                 <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="96" Text="Verify save file directory"/>
-            </Button>
-            <Button Name="apply_profile_button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Height="35" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Margin="5, 0, 5, 5" Command="{Binding ApplyProfileCommand}">
+            </Button>-->
+            <Button Name="apply_profile_button" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Height="38" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="100" Margin="5, 0, 5, 5" Command="{Binding ApplyProfileCommand}">
                 <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Text="Apply profile for selected game"/>
             </Button>
         </StackPanel>
