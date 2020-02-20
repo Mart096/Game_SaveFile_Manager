@@ -8,7 +8,7 @@ using System.Windows.Data;
 
 namespace Games_SaveFiles_Manager
 {
-    class BoolToNegativeBoolConverter : IValueConverter
+    public class BoolToNegativeBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

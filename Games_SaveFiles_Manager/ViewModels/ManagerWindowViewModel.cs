@@ -25,6 +25,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         private ICommand _getCommand;
         private ICommand _applyProfileCommand;
         private ICommand _verifySaveFilePathCommand;
+        private ICommand _openSaveFilesDirectoryInExplroreCommand;
         #endregion
 
         #region Properties
@@ -117,6 +118,21 @@ namespace Games_SaveFiles_Manager.ViewModels
                 return _verifySaveFilePathCommand;
             }
         }
+
+        public ICommand OpenSaveFilesDirectoryInExplroreCommand
+        {
+            get
+            {
+                if (_openSaveFilesDirectoryInExplroreCommand == null)
+                {
+                    _openSaveFilesDirectoryInExplroreCommand = new CommandHandler(
+                        param => OpenSaveFileDirectoryInExplorer()
+                        );
+                }
+                return _openSaveFilesDirectoryInExplroreCommand;
+            }
+        }
+
 
         #endregion
 
@@ -365,18 +381,18 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                     if (Directory.Exists(temp_path))
                     {
+                        var files_in_directory = Directory.GetFiles(temp_path);
                         if (method == 1) //1st method
                         {
-                            var files_in_directory = Directory.GetFiles(temp_path);
                             //string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
-                            string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + "_managerprofiles\\" + SelectedProfile.Profile_name);
+                            string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedGame.Game_name + "_managerprofiles\\" + SelectedProfile.Profile_name);
                             Debug.Print("Directory to game save files: "+files_in_selected_profile_directory);
 
                             //copy save game files of current profile to profile directory
                             foreach (string file in files_in_directory)
                             {
                                 //File.Copy(file, temp_path + "\\..\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
-                                File.Copy(file, temp_path + "\\..\\" + "_managerprofiles\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
+                                File.Copy(file, temp_path + "\\..\\"+ SelectedGame.Game_name + "_managerprofiles\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
                             }
 
                             //copy save game files of another profile to game's save file directory
@@ -387,8 +403,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                         }
                         else //2nd method
                         {
-                            var files_in_directory = Directory.GetFiles(temp_path);
-
                             string[] files_in_selected_profile_directory = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name+ "\\" + SelectedProfile.Profile_name);
                             Debug.Print("Directory path of profile's specific game save files");
 
@@ -467,7 +481,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                                                      where items.Element("Save_file_location").Value.ToString() == temp_path
                                                      select items).Count();
 
-                    if (save_file_directory_count <= 1)
+                    if (save_file_directory_count <= 1) //there are no more than one game with the same save file directory
                     {
                         foreach (var item in profiles_query)
                         {
@@ -475,16 +489,17 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                             if (method == 1)
                             {
-                                if (!(Directory.Exists(temp_path + "\\..\\" + "_managerprofiles\\")))
+                                if (!(Directory.Exists(temp_path + "\\..\\" + game_name + "_managerprofiles\\")))
                                 {
-                                    string new_path = temp_path + "\\..\\" + "_managerprofiles";
+                                    string new_path = temp_path + "\\..\\" + game_name + "_managerprofiles";
                                     Directory.CreateDirectory(new_path);
                                 }
-                                new_directory_path = temp_path + "\\..\\" + "_managerprofiles\\" + item.Element("Name").Value;
+                                new_directory_path = temp_path + "\\..\\" + game_name + "_managerprofiles\\" + item.Element("Name").Value;
                             }
                             else
                             {
-                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\")))
+                                
+if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\")))
                                 {
                                     Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "games\\");
                                 }
@@ -498,12 +513,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                             if (!(Directory.Exists(new_directory_path) == true))
                             {
-                                //create directory for specified profile
                                 Directory.CreateDirectory(new_directory_path);
-                                //if (item.Element("Name").Value.Equals("default"))
-                                //{
-                                //    //copy current save files to default's profile directory
-                                //}
                             }
                         }
                     }
@@ -528,6 +538,25 @@ namespace Games_SaveFiles_Manager.ViewModels
                 return false;
             }
             return true;
+        }
+
+        private void OpenSaveFileDirectoryInExplorer()
+        {
+            try
+            {
+                if (SelectedGame != null)
+                    Process.Start("explorer.exe", SelectedGame.Save_file_location);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                Debug.Print(ex.Message);
+                MessageBox.Show("Failed to open specified save files' directory. Directory does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            catch (Exception ex)
+            {
+                Debug.Print(ex.Message);
+                MessageBox.Show("Failed to open specified save files' directory!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
         #endregion
     }

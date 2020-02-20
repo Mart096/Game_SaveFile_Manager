@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ using Games_SaveFiles_Manager.Models;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
-    class GameListManagerViewModel:INotifyPropertyChanged
+    public class GameListManagerViewModel:INotifyPropertyChanged
     {
         #region Fields
         private ObservableCollection<Game> games = new ObservableCollection<Game>();
@@ -31,6 +32,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         private ICommand _deactivateEditModeCommand;
         private ICommand _saveChangesToGameDataCommand;
         private ICommand _addNewGameCommand;
+        
         #endregion
 
         #region Properties
@@ -207,7 +209,6 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
-        
         #endregion
 
         #region Events
@@ -362,7 +363,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     //Warning
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
             }
@@ -383,6 +384,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     //double stream to one file might cause unpredictable behavior. Close filestream as soon as you load data.
 
                     XDocument xdoc = new XDocument();//XDocument.Load(applicationDataFilePath, LoadOptions.SetBaseUri);
+                    bool prompt_save_file_migration = false;
 
                     using (FileStream fs = new FileStream(applicationDataFilePath/*xdoc.BaseUri*/, FileMode.Open, FileAccess.Read))
                     {
@@ -390,40 +392,60 @@ namespace Games_SaveFiles_Manager.ViewModels
                     }
 
                     Game temp_game_item = tempSelectedGameData;
-                    //xdoc.Element("Games_list").Element("Games").Add(new XElement("Game",
-                    //new XElement("Id", " "), new XElement("Name", new_game_name_textbox.Text), new XElement("Save_file_location", ""), new XElement("Store_profile_saves_in_app_location", "1")));
                     var query = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
                                  where (string)item.Element("Name").Value == temp_game_item.Game_name //create field containing temporary game name or use Game fields' values
                                  select item).First();
-                    query.Element("Name").Value = SelectedGame.Game_name; //game_name_textbox.Text;
-                    query.Element("Save_file_location").Value = SelectedGame.Save_file_location;//save_file_directory_path_textbox.Text;
+                    //Same as above, but with lambda expression
+                    //XElement elem1 = xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game").Where(item => (string)item.Element("Name").Value == temp_game_item.Game_name).Select(item => item).First();
 
-                    //save_store_decision_radarbox1.IsChecked == true)
-                    //if (SaveFileMode1==true)//SelectedGame.Profile_specific_save_file_storage_method == 1)
-                    //{
-                    //    query.Element("Store_profile_saves_in_app_location").Value = "1";
-                    //}
-                    //else
-                    //{
-                    //    query.Element("Store_profile_saves_in_app_location").Value = "2";
-                    //}
+                    query.Element("Name").Value = SelectedGame.Game_name;
 
-                    query.Element("Store_profile_saves_in_app_location").Value = SelectedGame.Profile_specific_save_file_storage_method.ToString();
+                    //update save file location element if the value was changed
+                    if((query.Element("Save_file_location").Value != SelectedGame.Save_file_location) && Directory.Exists(SelectedGame.Save_file_location))
+                    {
+                        query.Element("Save_file_location").Value = SelectedGame.Save_file_location;
+                        prompt_save_file_migration = true;
+                    }
+                    else if (!Directory.Exists(SelectedGame.Save_file_location))
+                    {
+                        throw new DirectoryNotFoundException();
+                    }
+
+                    //if save file storage method had been changed, game's element will be updated and prompt will be displayed to the user, asking if manager should move files to a new directory
+                    if (!(query.Element("Store_profile_saves_in_app_location").Value == SelectedGame.Profile_specific_save_file_storage_method.ToString()))
+                    {
+                        query.Element("Store_profile_saves_in_app_location").Value = SelectedGame.Profile_specific_save_file_storage_method.ToString();
+                        prompt_save_file_migration = true;
+                    }
+
+                    if (prompt_save_file_migration)
+                    { 
+                        //prompt
+                        MessageBoxResult boxresult1 = MessageBox.Show("Game save file storage method or game save file directory has been changed. Would you like to migrate save files to a new directory?", "Attention", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                        if (boxresult1 == MessageBoxResult.Yes)
+                            MigrateSaveFilesToNewDirectory(temp_game_item.Game_name, temp_game_item.Profile_specific_save_file_storage_method, SelectedGame.Profile_specific_save_file_storage_method, temp_game_item.Save_file_location, SelectedGame.Save_file_location);
+                    }
 
                     xdoc.Save(applicationDataFilePath);
+                    //End edit mode
+                    Deactivate_Edit_Mode();
                 }
                 else
                 {
                     //Warning
                 }
             }
+            catch (DirectoryNotFoundException)
+            {
+                MessageBox.Show("Specified save files' directory has not been found or is incorrect.", "Error");
+            }
             catch (Exception ex)
             {
                 MessageBox.Show("Failed to save games' list correctly. " + ex.Message);
+                //End edit mode
+                Deactivate_Edit_Mode();
             }
-
-            //End edit mode
-            Deactivate_Edit_Mode();
             //Load_Games_List();
             //Load_Selected_Games_Data(SelectedGame); 
         }
@@ -460,32 +482,160 @@ namespace Games_SaveFiles_Manager.ViewModels
             xdoc.Save(path);
         }
 
-        //private void Load_Selected_Games_Data(Game temp_obj)
-        //{
-        //    //Game temp_obj = (Game)games_listbox.SelectedItem;
-        //    try
-        //    {
-        //        SelectedGame.Game_name = temp_obj.Game_name; //game_name_textbox.Text = temp_obj.Game_name;
-        //        save_file_directory_path_textbox.Text = temp_obj.Save_file_location;
+        /// <summary>
+        /// Method responsible for moving game save files to new location, depending on settings, such as currently selected storage method
+        /// </summary>
+        /// <param name="game_name">Name of modified game</param>
+        /// <param name="previous_storage_method"></param>
+        /// <param name="currently_selected_method"></param>
+        /// <param name="save_file_path"></param>
+        /// <param name="new_save_file_path"></param>
+        private bool MigrateSaveFilesToNewDirectory(string game_name, int previous_storage_method, int currently_selected_method, string save_file_path, string new_save_file_path="")
+        {
+            try
+            {
+                XDocument xdoc = new XDocument();
 
-        //        if (temp_obj.Profile_specific_save_file_storage_method == 1)
-        //        {
-        //            save_store_decision_radarbox1.IsChecked = true;
-        //        }
-        //        else if (temp_obj.Profile_specific_save_file_storage_method == 2)
-        //        {
-        //            save_store_decision_radarbox2.IsChecked = true;
-        //        }
-        //        else
-        //        {
-        //            save_store_decision_radarbox1.IsChecked = true;
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show("Failed to load selected game's data! Error occured.", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
-        //    }
-        //}
-        #endregion
+                using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                    xdoc = XDocument.Load(fs);
+
+                var profiles_query = (from items in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile") select items); //will be used to move directories dedicated to the storage of profile specific game save files.
+                //string game_name = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                //                    where item.Element("Save_file_location").Value == save_file_path
+                //                    select item.Element("Name").Value).First();
+
+                string path_to_profiles_in_save_file_location = save_file_path + "\\..\\" + game_name + "_managerprofiles";
+                string path_to_profiles_in_new_save_file_location = new_save_file_path + "\\..\\" + game_name + "_managerprofiles";
+
+                string movedir1="";
+                string movedir2="";
+
+                //if both storage methods are equal and...
+                if(previous_storage_method == currently_selected_method)
+                {
+                    if (currently_selected_method == 1) //...it's equal to 1 (store files locally), then move save files to a new location
+                    {
+                        if(!Directory.Exists(path_to_profiles_in_save_file_location))
+                            Directory.CreateDirectory(path_to_profiles_in_save_file_location);
+                        if (!Directory.Exists(path_to_profiles_in_new_save_file_location))
+                            Directory.CreateDirectory(path_to_profiles_in_new_save_file_location);
+
+
+                        movedir1 = path_to_profiles_in_save_file_location + "\\";// + profile.Element("Name").Value;
+                        movedir2 = path_to_profiles_in_new_save_file_location + "\\";// + profile.Element("Name").Value;
+                        //foreach (var profile in profiles_query)
+                        //{
+                        //    try
+                        //    {
+                        //        Directory.Move(path_to_profiles_in_save_file_location+"\\"+profile.Element("Name").Value, path_to_profiles_in_new_save_file_location+"\\" + profile.Element("Name").Value);
+                        //    }
+                        //    catch (Exception)
+                        //    {
+                        //        //failed to move directory
+                        //    }
+                        //}
+                    }
+                    else if (currently_selected_method == 2) //it's equal to 2 (store files in manager's directory), then move save files to manager's directory
+                    {
+                        return true;
+                    }
+                    else //...something went wrong, because there has been wrong value specified for storage method
+                    {
+                        throw new InvalidOperationException("Save file storage method has invalid value!");
+                    }
+                }
+                else //if storage methods have diferrent value and...
+                {
+                    if (currently_selected_method == 1) //...current method is equal to 1 then move save files from manager's directory to a new directory
+                    {
+                        movedir1 = AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name;// + profile.Element("Name").Value;
+                        movedir2 = path_to_profiles_in_save_file_location;
+                    }
+                    else if(currently_selected_method == 2) //current method is equal to 2 then move save file from old directory to manager's directory
+                    {
+                        movedir1 = path_to_profiles_in_save_file_location;
+                        movedir2 = AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name;// + profile.Element("Name").Value;
+                    }
+                    else
+                    {
+                        //ERROR
+                    }
+                }
+
+                //moving game save files to selected directory
+                foreach (var profile in profiles_query)
+                {
+                    string temp1 = movedir1 + "\\" + profile.Element("Name").Value.ToString();
+                    string temp2 = movedir2 + "\\" + profile.Element("Name").Value.ToString();
+
+                    string[] files_in_selected_profile_directory = Directory.GetFiles(temp1);
+                    Debug.Print("Moving directories (from - to):\n " + movedir1 + "\\" + profile.Element("Name").Value + "\n " + movedir2 + "\\" + profile.Element("Name").Value);
+
+                    //copy save game files of current profile to profile directory
+                    foreach (string file in files_in_selected_profile_directory)
+                    {
+                        File.Copy(file, temp2 + "\\" + Path.GetFileName(file), true);
+                        Debug.Print("Copy file: \"" + Path.GetFileName(file) + "\" from " + file + " to " + temp2);
+                        File.Delete(file);
+                    }
+                    //WARNING, this solution doesn't work for directories on different volumes. Possible solution assumes file copying to target directory and deleting them in old directory
+                    //Directory.Move(movedir1 + "\\" + profile.Element("Name").Value, movedir2 + "\\" + profile.Element("Name").Value);
+                }
+
+                //depending on settings, migrate stored game save files from old directory to a new one, specified in the path
+                //save files will be moved from manager's directory to specified path
+                //if (currently_selected_method == 1 && Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name))
+                //{
+                //    if (!Directory.Exists(path_to_profiles_in_save_file_location))
+                //        Directory.CreateDirectory(path_to_profiles_in_save_file_location);
+
+                //    foreach (var profile in profiles_query)
+                //    {
+                //        try
+                //        {
+                //            Directory.Move(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name + "\\" + profile.Element("Name").Value, path_to_profiles_in_save_file_location);
+                //        }
+                //        catch(Exception)
+                //        {
+                //            //failed to move directory
+                //        }
+                //    }
+                //}
+                //else if (currently_selected_method == 2 && Directory.Exists(save_file_path))
+                //{
+                //    if (!Directory.Exists(path_to_profiles_in_save_file_location))
+                //    {
+                //        throw new DirectoryNotFoundException("Directory with profiles' save files was not found.");
+                //    }
+                //    else if (!Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name))
+                //        Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name);
+
+                //    foreach (var profile in profiles_query)
+                //    {
+                //        try
+                //        {
+                //            Directory.Move(path_to_profiles_in_save_file_location + "\\" + profile.Element("Name").Value, AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name + "\\");
+                //        }
+                //        catch (Exception)
+                //        {
+                //            //failed to move directory
+                //        }
+                //    }
+                //}
+                //else
+                //{
+                //    throw new Exception("Failed to move files to current directory");
+                //}
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Debug.Print(ex.Message);
+                return false;
+            }
+
+        }
+
+            #endregion
     }
 }

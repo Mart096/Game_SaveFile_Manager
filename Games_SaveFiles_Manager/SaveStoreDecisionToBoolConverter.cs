@@ -63,6 +63,7 @@ namespace Games_SaveFiles_Manager
             else if (temp_val == false && temp_param.Equals("local"))
             {
                 return 2;
+                //1?
             }
             else if (temp_val == true && temp_param.Equals("local"))
             {

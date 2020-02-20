@@ -334,7 +334,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     //Warning
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 MessageBox.Show("Exception!");
             }
@@ -452,7 +452,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                             //change profile's directory name accordingly to used method and changes made to profile
                             if (Convert.ToInt32(item.Element("Store_profile_saves_in_app_location").Value) == 1)
                             {
-                                directory_path = item.Element("Save_file_location").Value + "\\..\\" + "_managerprofiles\\";
+                                directory_path = item.Element("Save_file_location").Value + "\\..\\" + item.Element("Name").Value + "_managerprofiles\\";
                             }
                             else
                             {   

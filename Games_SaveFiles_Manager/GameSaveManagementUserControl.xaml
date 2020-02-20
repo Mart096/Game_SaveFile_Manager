@@ -61,6 +61,11 @@
             </StackPanel>
             <Label Content="Save file directory" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox Name="game_saves_directory" IsReadOnly="True" Height="25" Text="{Binding SelectedGame.Save_file_location}"/>
+            <Button Margin="0, 5, 0, 0" Width="100" Command="{Binding OpenSaveFilesDirectoryInExplroreCommand}">
+                <TextBlock TextAlignment="Center" TextWrapping="WrapWithOverflow">
+                    Open save files' directory
+                </TextBlock>
+            </Button>
         </StackPanel>
 
         <StackPanel Grid.Row="3" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Left">
