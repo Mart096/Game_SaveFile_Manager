@@ -155,66 +155,56 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         #region Methods
 
-        //this method has been retired from use
-        private void Load_Games_List() //this method should be availabale in the main window
-        {
-            try
-             {
-                 //Try to load file in xml extension, with list of games
-                 if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"))
-                 {
-                     XDocument xdoc = XDocument.Load(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
-                     //FileStream fs = new FileStream(xdoc.BaseUri, FileMode.Open, FileAccess.Read);
 
-                     //reminder: games_list.xml construction: Games_list->Games->Game->Id|Name|Save_file_location|Store_profile_saves_in_app_location|
-                     var query = from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
-                                 select item;
+        //private void Load_Games_List() //this method has been retired from use
+        //{
+        //    try
+        //     {
+        //         //Try to load file in xml extension, with list of games
+        //         if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"))
+        //         {
+        //             XDocument xdoc = XDocument.Load(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
 
-                    foreach (var item in query) //adding games to list
-                    {
-                        Game gi_ob = new Game
-                        {
-                            Game_name = item.Element("Name").Value,
-                            //(from temp_it in item.Descendants()
-                            //                  select temp_it.Element("Name")).First().ToString();
+        //             //reminder: games_list.xml construction: Games_list->Games->Game->Id|Name|Save_file_location|Store_profile_saves_in_app_location|
+        //             var query = from item in xdoc.Element("Games_list").Element("Games").Elements("Game")
+        //                         select item;
 
-                            Save_file_location = item.Element("Save_file_location").Value
-                        };
-                        //(from temp_it in item.Descendants()
-                        //       select temp_it.Element("Save_file_location")).First().ToString();
+        //            foreach (var item in query) //adding games to list
+        //            {
+        //                Game gi_ob = new Game
+        //                {
+        //                    Game_name = item.Element("Name").Value,
+        //                    Save_file_location = item.Element("Save_file_location").Value
+        //                };
 
-                        string temp_profile_specific_file_storage_method;
-                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value;
-                        // (from temp_it in item.Descendants()
-                        //select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();
+        //                string temp_profile_specific_file_storage_method;
+        //                temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value;
+        //                gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+        //                gi_ob.Profile_used = item.Element("Profile_used").Value;
 
-                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
-
-                        gi_ob.Profile_used = item.Element("Profile_used").Value;
-
-                        Games.Add(gi_ob);
-                    }
-                 }
-                 else
-                 {
-                     //create new "games_list.xml" file
-                     XDeclaration decl = new XDeclaration("1.0", "UTF-8", "no");
-                     XElement root = new XElement("Games_list",
-                         new XElement("Games"));
-                     XDocument xdoc = new XDocument(decl, root);
-                     xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
-                 }
-            }
-            catch (System.Xml.XmlException)
-            {
-                //create new "games_list.xml" file
-                XDeclaration decl = new XDeclaration("1.0", "UTF-8", "no");
-                XElement root = new XElement("Games_list",
-                    new XElement("Games"));
-                XDocument xdoc = new XDocument(decl, root);
-                xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
-            }
-         }
+        //                Games.Add(gi_ob);
+        //            }
+        //         }
+        //         else
+        //         {
+        //             //create new "games_list.xml" file
+        //             XDeclaration decl = new XDeclaration("1.0", "UTF-8", "no");
+        //             XElement root = new XElement("Games_list",
+        //                 new XElement("Games"));
+        //             XDocument xdoc = new XDocument(decl, root);
+        //             xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
+        //         }
+        //    }
+        //    catch (System.Xml.XmlException)
+        //    {
+        //        //create new "games_list.xml" file
+        //        XDeclaration decl = new XDeclaration("1.0", "UTF-8", "no");
+        //        XElement root = new XElement("Games_list",
+        //            new XElement("Games"));
+        //        XDocument xdoc = new XDocument(decl, root);
+        //        xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
+        //    }
+        // }
 
         protected void OnPropertyChange(string propertyName)
         {
@@ -281,9 +271,9 @@ namespace Games_SaveFiles_Manager.ViewModels
             {
                 Profiles.Clear();
                 Games.Clear();
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml"))
+                if (File.Exists(UtilClass.GetConfigFilePath()))
                 {
-                    string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml";
+                    string path_to_config = UtilClass.GetConfigFilePath();
                     XDocument xdoc = XDocument.Load(path_to_config, LoadOptions.SetBaseUri);
 
                     var query_profiles = (from items in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile")
@@ -349,7 +339,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                         new XElement("Name", "default"), new XElement("Creation_date", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss")))), 
                         new XElement("Games"));
                     XDocument xdoc = new XDocument(declaration, root);
-                    xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
+                    xdoc.Save(UtilClass.GetConfigFilePath());
 
                     Load_Application_Data();
                 }
@@ -372,6 +362,7 @@ namespace Games_SaveFiles_Manager.ViewModels
             string temp_path = SelectedGame.Save_file_location; //game save files' directory
             string previous_profile_name = SelectedGame.Profile_used; //currently active profile for games
             int method = SelectedGame.Profile_specific_save_file_storage_method; //method chosen for profiles' game save files storage
+            List<string> files_in_selected_profile_directory=new List<string>;
 
             try
             {
@@ -385,8 +376,8 @@ namespace Games_SaveFiles_Manager.ViewModels
                         if (method == 1) //1st method
                         {
                             //string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
-                            string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedGame.Game_name + "_managerprofiles\\" + SelectedProfile.Profile_name);
-                            Debug.Print("Directory to game save files: "+files_in_selected_profile_directory);
+                            files_in_selected_profile_directory = Directory.GetFiles(UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, SelectedGame.Game_name, SelectedProfile.Profile_name)).ToList(); //temp_path + "\\..\\" + SelectedGame.Game_name + "_managerprofiles\\" + SelectedProfile.Profile_name);
+                            Debug.Print("Directory to game save files: " + files_in_selected_profile_directory);
 
                             //copy save game files of current profile to profile directory
                             foreach (string file in files_in_directory)
@@ -403,7 +394,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                         }
                         else //2nd method
                         {
-                            string[] files_in_selected_profile_directory = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name+ "\\" + SelectedProfile.Profile_name);
+                            files_in_selected_profile_directory = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name+ "\\" + SelectedProfile.Profile_name).ToList();
                             Debug.Print("Directory path of profile's specific game save files");
 
                             //copy save game files of current profile to profile directory
@@ -421,7 +412,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                         }
 
                         //make changes in app's config file
-                        using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                        using (FileStream fs = new FileStream(UtilClass.GetConfigFilePath(), FileMode.Open, FileAccess.Read))
                         {
                             xdoc = XDocument.Load(fs);
                         }
@@ -432,7 +423,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                         edited_game.Element("Profile_used").Value = SelectedProfile.Profile_name;
 
-                        xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
+                        xdoc.Save(UtilClass.GetConfigFilePath());
                     }
                     else
                     {
@@ -471,7 +462,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 //check if given path exists and doesn't collide with other games
                 if (Directory.Exists(temp_path))
                 {
-                    using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory+"game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                    using (FileStream fs = new FileStream(UtilClass.GetConfigFilePath(), FileMode.Open, FileAccess.Read))
                     {
                         xdoc = XDocument.Load(fs);
                     }

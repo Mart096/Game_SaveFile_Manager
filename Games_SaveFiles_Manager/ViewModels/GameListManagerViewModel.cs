@@ -220,7 +220,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         internal GameListManagerViewModel()
         {
             //Load_Games_List();
-            LoadApplicationData(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
+            LoadApplicationData(UtilClass.GetConfigFilePath());
         }
         #endregion
 
@@ -496,7 +496,7 @@ namespace Games_SaveFiles_Manager.ViewModels
             {
                 XDocument xdoc = new XDocument();
 
-                using (FileStream fs = new FileStream(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml", FileMode.Open, FileAccess.Read))
+                using (FileStream fs = new FileStream(UtilClass.GetConfigFilePath(), FileMode.Open, FileAccess.Read))
                     xdoc = XDocument.Load(fs);
 
                 var profiles_query = (from items in xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile") select items); //will be used to move directories dedicated to the storage of profile specific game save files.

@@ -187,7 +187,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         public ProfileManagerViewModel()
         {
             //LoadProfilesList();
-            LoadApplicationData(AppDomain.CurrentDomain.BaseDirectory + "game_save_file_manager_config.xml");
+            LoadApplicationData(UtilClass.GetConfigFilePath());
         }
         #endregion
 
