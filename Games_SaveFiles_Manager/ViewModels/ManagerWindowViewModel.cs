@@ -214,56 +214,55 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
-        //this method has been retired from use
-        private void Load_Profiles_List()
-        {
-            try
-            {
-                Profiles.Clear();
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml"))
-                {
-                    string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml";
-                    XDocument xdoc = XDocument.Load(path_to_config, LoadOptions.SetBaseUri);
+        //private void Load_Profiles_List() //this method has been retired from use
+        //{
+        //    try
+        //    {
+        //        Profiles.Clear();
+        //        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml"))
+        //        {
+        //            string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml";
+        //            XDocument xdoc = XDocument.Load(path_to_config, LoadOptions.SetBaseUri);
 
-                    var query = (from items in xdoc.Element("Profiles_list").Element("Profiles").Elements("Profile")
-                                 select items);
+        //            var query = (from items in xdoc.Element("Profiles_list").Element("Profiles").Elements("Profile")
+        //                         select items);
 
-                    foreach (var item in query)
-                    {
-                        string pattern = "dd.MM.yyyy HH:mm:ss";
+        //            foreach (var item in query)
+        //            {
+        //                string pattern = "dd.MM.yyyy HH:mm:ss";
 
-                        if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime temp_creation_date))
-                        {
-                            //successful
-                            Profile loaded_profile = new Profile
-                            {
-                                Profile_name = item.Element("Name").Value,
-                                Creation_time = temp_creation_date
-                            };
+        //                if (DateTime.TryParseExact(item.Element("Creation_date").Value, pattern, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out DateTime temp_creation_date))
+        //                {
+        //                    //successful
+        //                    Profile loaded_profile = new Profile
+        //                    {
+        //                        Profile_name = item.Element("Name").Value,
+        //                        Creation_time = temp_creation_date
+        //                    };
 
-                            Profiles.Add(loaded_profile);
-                        }
-                        else
-                        {
-                            //failure
+        //                    Profiles.Add(loaded_profile);
+        //                }
+        //                else
+        //                {
+        //                    //failure
 
-                        }
-                    }
+        //                }
+        //            }
 
-                }
-                else //file containing list of profiles was not found and will be created instead
-                {
-                    XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "no");
-                    XElement root = new XElement("Profiles_list", new XElement("Profiles"));
-                    XDocument xdoc = new XDocument(declaration, root);
-                    xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml");
-                }
-            }
-            catch
-            {
+        //        }
+        //        else //file containing list of profiles was not found and will be created instead
+        //        {
+        //            XDeclaration declaration = new XDeclaration("1.0", "UTF-8", "no");
+        //            XElement root = new XElement("Profiles_list", new XElement("Profiles"));
+        //            XDocument xdoc = new XDocument(declaration, root);
+        //            xdoc.Save(AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml");
+        //        }
+        //    }
+        //    catch
+        //    {
 
-            }
-        }
+        //    }
+        //}
 
         private void Load_Application_Data()
         {
@@ -362,7 +361,7 @@ namespace Games_SaveFiles_Manager.ViewModels
             string temp_path = SelectedGame.Save_file_location; //game save files' directory
             string previous_profile_name = SelectedGame.Profile_used; //currently active profile for games
             int method = SelectedGame.Profile_specific_save_file_storage_method; //method chosen for profiles' game save files storage
-            List<string> files_in_selected_profile_directory=new List<string>;
+            List<string> files_in_selected_profile_directory=new List<string>();
 
             try
             {
@@ -383,7 +382,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                             foreach (string file in files_in_directory)
                             {
                                 //File.Copy(file, temp_path + "\\..\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
-                                File.Copy(file, temp_path + "\\..\\"+ SelectedGame.Game_name + "_managerprofiles\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
+                                File.Copy(file, UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, SelectedGame.Game_name, previous_profile_name) + Path.GetFileName(file), true); //temp_path + "\\..\\" + SelectedGame.Game_name + "_managerprofiles\\" + previous_profile_name + "\\" + Path.GetFileName(file)
                             }
 
                             //copy save game files of another profile to game's save file directory
@@ -394,14 +393,14 @@ namespace Games_SaveFiles_Manager.ViewModels
                         }
                         else //2nd method
                         {
-                            files_in_selected_profile_directory = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name+ "\\" + SelectedProfile.Profile_name).ToList();
-                            Debug.Print("Directory path of profile's specific game save files");
+                            files_in_selected_profile_directory = Directory.GetFiles(UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(SelectedGame.Game_name, SelectedProfile.Profile_name)).ToList();//AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name+ "\\" + SelectedProfile.Profile_name).ToList();
+                            Debug.Print("Directory path of profile's specific game save files: "+ files_in_selected_profile_directory);
 
                             //copy save game files of current profile to profile directory
                             foreach (string file in files_in_directory)
                             {
-                                File.Copy(file, AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name + "\\" + Path.GetFileName(file), true);
-                                Debug.Print("Copy file: \"" + Path.GetFileName(file) + "\" from " + file + " to " + AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name);
+                                File.Copy(file,UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(SelectedGame.Game_name, previous_profile_name) + Path.GetFileName(file), true); //AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name + "\\"+ Path.GetFileName(file)
+                                Debug.Print("Copy file: \"" + Path.GetFileName(file) + "\" from " + file + " to " + UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(SelectedGame.Game_name, previous_profile_name)); //AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name);
                             }
 
                             //copy save game files of another profile to game's save file directory
@@ -433,7 +432,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("This profile is already activated!");
+                    MessageBox.Show("This profile has been already activated!");
                 }
             }
             catch (Exception ex)
@@ -480,26 +479,26 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                             if (method == 1)
                             {
-                                if (!(Directory.Exists(temp_path + "\\..\\" + game_name + "_managerprofiles\\")))
+                                if (!(Directory.Exists(UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, game_name))));  //temp_path + "\\..\\" + game_name + "_managerprofiles\\")))
                                 {
-                                    string new_path = temp_path + "\\..\\" + game_name + "_managerprofiles";
+                                    string new_path = UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, game_name); //temp_path + "\\..\\" + game_name + "_managerprofiles";
                                     Directory.CreateDirectory(new_path);
                                 }
-                                new_directory_path = temp_path + "\\..\\" + game_name + "_managerprofiles\\" + item.Element("Name").Value;
+                                new_directory_path = UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, game_name, item.Element("Name").Value); //temp_path + "\\..\\" + game_name + "_managerprofiles\\" + item.Element("Name").Value;
                             }
                             else
                             {
                                 
-if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\")))
+                                if (!(Directory.Exists(UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory())))
                                 {
-                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "games\\");
+                                    Directory.CreateDirectory(UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory());
                                 }
-                                if (!(Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name)))
+                                if (!(Directory.Exists(UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(game_name))))
                                 {
-                                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name);
+                                    Directory.CreateDirectory(UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(game_name));
                                 }
 
-                                new_directory_path = AppDomain.CurrentDomain.BaseDirectory + "games\\" + game_name + "\\" + item.Element("Name").Value;
+                                new_directory_path = UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(game_name) + item.Element("Name").Value;
                             }
 
                             if (!(Directory.Exists(new_directory_path) == true))

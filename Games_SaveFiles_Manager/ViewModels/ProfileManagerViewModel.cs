@@ -201,6 +201,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         /// <summary>
         /// Method formerly used for loading profiles. It no longer has any use (and should NOT be used at any time, it's only kept for archival purposes)
         /// </summary>
+        [Obsolete("Obsolete method. Use \"LoadApplicationData\" method instead.")]
         private void LoadProfilesList()
         {
             try
@@ -291,13 +292,12 @@ namespace Games_SaveFiles_Manager.ViewModels
                 else //file containing list of profiles was not found and will be created instead
                 {
                     FileNotFoundMethod(path);
-
                     LoadApplicationData(path);
                 }
             }
             catch
             {
-
+                MessageBox.Show("Loading application data failed!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -359,22 +359,8 @@ namespace Games_SaveFiles_Manager.ViewModels
         {
             try
             {
-                //string path_to_config = AppDomain.CurrentDomain.BaseDirectory + "profiles_list.xml";
                 if (File.Exists(applicationDataFilePath))
                 {
-                    //XDocument xdoc = XDocument.Load(path_to_config, LoadOptions.SetBaseUri);
-
-                    //using (FileStream fs = new FileStream(path_to_config, FileMode.Open, FileAccess.ReadWrite))
-                    //{
-                    //    //xdoc.Descendants("Profiles")
-                    //    //    .Elements("Profile")
-                    //    //    .Where(x => (string)x.Element("Creation_date") == SelectedProfile.Creation_time.ToString("dd/MM/yyyy HH:mm:ss")).Remove();
-                    //    xdoc.Element("Profiles_list").Element("Profiles").Elements("Profile").Where(x => (string)x.Element("Creation_date") == SelectedProfile.Creation_time.ToString("dd/MM/yyyy HH:mm:ss")).Remove();
-
-                    //    xdoc.Save(fs);
-                    //    fs.Close();
-                    //}
-
                     XDocument xdoc = new XDocument();
 
                     using(FileStream fs = new FileStream(applicationDataFilePath, FileMode.Open, FileAccess.Read))
@@ -398,9 +384,9 @@ namespace Games_SaveFiles_Manager.ViewModels
                     MessageBox.Show("File doesn\'t exist!");
                 }
             }
-            catch(Exception ex)
+            catch(Exception)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Profile removal failed.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {

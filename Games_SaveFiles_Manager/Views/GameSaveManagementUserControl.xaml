@@ -6,8 +6,10 @@
              xmlns:local="clr-namespace:Games_SaveFiles_Manager"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <local:IntToSaveMethodConverter x:Key="IntToSaveMethodConv"/>
+    </UserControl.Resources>
     
-        
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -44,8 +46,6 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        
-
         <StackPanel Grid.Column="3" Grid.Row="1" Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Selected profile:"/>
@@ -59,9 +59,13 @@
                 <Label Content="Current profile:"/>
                 <TextBlock Text="{Binding SelectedGame.Profile_used}" Margin="5, 5, 0, 0"/>
             </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Save file storage method:"/>
+                <TextBlock Text="{Binding SelectedGame.Profile_specific_save_file_storage_method, Converter={StaticResource IntToSaveMethodConv}}" Margin="5, 5, 0, 0"/>
+            </StackPanel>
             <Label Content="Save file directory" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             <TextBox Name="game_saves_directory" IsReadOnly="True" Height="25" Text="{Binding SelectedGame.Save_file_location}"/>
-            <Button Margin="0, 5, 0, 0" Width="100" Command="{Binding OpenSaveFilesDirectoryInExplroreCommand}">
+            <Button Margin="0, 5, 0, 0" Width="100" Command="{Binding OpenSaveFilesDirectoryInExplroreCommand}" HorizontalAlignment="Left">
                 <TextBlock TextAlignment="Center" TextWrapping="WrapWithOverflow">
                     Open save files' directory
                 </TextBlock>

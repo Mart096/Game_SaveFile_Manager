@@ -239,51 +239,51 @@ namespace Games_SaveFiles_Manager.ViewModels
             return parameter == null ? false : true;
         }
 
-        private void Load_Games_List() //this method should be availabale in the main window
-        {
-            //games_listbox.SelectedItem = null; 
-            Games.Clear(); //games_listbox.Items.Clear();
-            try
-            {
-                //Try to load file in xml extension, with list of games
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"))
-                {
-                    XDocument xdoc = XDocument.Load(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
-                    //FileStream fs = new FileStream(xdoc.BaseUri, FileMode.Open, FileAccess.Read);
+        //private void Load_Games_List() //this method should be availabale in the main window
+        //{
+        //    //games_listbox.SelectedItem = null; 
+        //    Games.Clear(); //games_listbox.Items.Clear();
+        //    try
+        //    {
+        //        //Try to load file in xml extension, with list of games
+        //        if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml"))
+        //        {
+        //            XDocument xdoc = XDocument.Load(AppDomain.CurrentDomain.BaseDirectory + "games_list.xml");
+        //            //FileStream fs = new FileStream(xdoc.BaseUri, FileMode.Open, FileAccess.Read);
 
-                    //reminder: games_list.xml construction: Games_list->Games->Game->Id|Name|Save_file_location|Store_profile_saves_in_app_location|
-                    var query = from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
-                                select item;
+        //            //reminder: games_list.xml construction: Games_list->Games->Game->Id|Name|Save_file_location|Store_profile_saves_in_app_location|
+        //            var query = from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+        //                        select item;
 
-                    foreach (var item in query) //adding games to list
-                    {
-                        Game gi_ob = new Game();
-                        gi_ob.Game_name = item.Element("Name").Value;/*(from temp_it in item.Descendants()
-                                          select temp_it.Element("Name")).First().ToString();*/
+        //            foreach (var item in query) //adding games to list
+        //            {
+        //                Game gi_ob = new Game();
+        //                gi_ob.Game_name = item.Element("Name").Value;/*(from temp_it in item.Descendants()
+        //                                  select temp_it.Element("Name")).First().ToString();*/
 
-                        gi_ob.Save_file_location = item.Element("Save_file_location").Value;/*(from temp_it in item.Descendants()
-                                                   select temp_it.Element("Save_file_location")).First().ToString();*/
+        //                gi_ob.Save_file_location = item.Element("Save_file_location").Value;/*(from temp_it in item.Descendants()
+        //                                           select temp_it.Element("Save_file_location")).First().ToString();*/
 
-                        string temp_profile_specific_file_storage_method;
-                        temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; /*(from temp_it in item.Descendants()
-                                                   select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();*/
+        //                string temp_profile_specific_file_storage_method;
+        //                temp_profile_specific_file_storage_method = item.Element("Store_profile_saves_in_app_location").Value; /*(from temp_it in item.Descendants()
+        //                                           select temp_it.Element("Store_profile_saves_in_app_location")).First().ToString();*/
 
-                        gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
+        //                gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
 
-                        //games_listbox.Items.Add(gi_ob);
-                        Games.Add(gi_ob);
-                    }
-                }
-                else
-                {
-                    FileNotFoundMethod(applicationDataFilePath);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to load games' list. " + ex.Message);
-            }
-        }
+        //                //games_listbox.Items.Add(gi_ob);
+        //                Games.Add(gi_ob);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            FileNotFoundMethod(applicationDataFilePath);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show("Failed to load games' list. " + ex.Message);
+        //    }
+        //}
 
         private void LoadApplicationData(string path)
         {

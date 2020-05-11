@@ -46,6 +46,16 @@ namespace Games_SaveFiles_Manager
         /// </summary>
         /// <param name="game_name"></param>
         /// <returns></returns>
+        static internal string GetManagerProfilesDirectoryOfAGameInManagerDirectory()
+        {
+            return AppDomain.CurrentDomain.BaseDirectory + "\\games\\";
+        }
+
+        /// <summary>
+        /// Returns path to directory with profiles of a specific game, stored inside game save files manager directory
+        /// </summary>
+        /// <param name="game_name"></param>
+        /// <returns></returns>
         static internal string GetManagerProfilesDirectoryOfAGameInManagerDirectory(string game_name)
         {
             return AppDomain.CurrentDomain.BaseDirectory + "\\games\\" + game_name + "\\";
