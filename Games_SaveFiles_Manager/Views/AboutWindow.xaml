@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Games_SaveFiles_Manager"
         mc:Ignorable="d"
-        Title="AboutWindow" Height="450" Width="800">
+        Title="Game save file manager 1.0.0.1" Height="304.261" Width="440.767">
     <Grid>
-        <Label Name="version_label" Height="30" Width="70" Margin="10,379,712,10"/>
+        <Label Name="version_label" Height="30" Width="70" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="5, 0, 0, 5"/>
     </Grid>
 </Window>

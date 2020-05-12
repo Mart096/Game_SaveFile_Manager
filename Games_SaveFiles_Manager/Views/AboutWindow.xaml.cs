@@ -36,8 +36,8 @@ namespace Games_SaveFiles_Manager
             }
             catch (InvalidDeploymentException)
             {
-                MessageBox.Show("Failed to read application's version!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                version = "unknown";
+                //MessageBox.Show("Failed to read application's version!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                version = "1.0.0.1";
             }
             finally
             {
