@@ -14,7 +14,7 @@ using Games_SaveFiles_Manager.Models;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
-    public class GameListManagerViewModel:INotifyPropertyChanged
+    class GameListManagerViewModel : ViewModelBase
     {
         #region Fields
         private ObservableCollection<Game> games = new ObservableCollection<Game>();
@@ -212,7 +212,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         #endregion
 
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Constructors
@@ -226,13 +226,13 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         #region Methods
 
-        private void OnPropertyChange(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        //private void OnPropertyChange(string propertyName)
+        //{
+        //    if (PropertyChanged != null)
+        //    {
+        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        //    }
+        //}
 
         private bool CanExecute(object parameter)
         {

@@ -15,7 +15,7 @@ using Games_SaveFiles_Manager.Models;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
-    class ProfileManagerViewModel : INotifyPropertyChanged
+    class ProfileManagerViewModel : ViewModelBase
     {
         #region Fields
         private ObservableCollection<Profile> profiles = new ObservableCollection<Profile>();
@@ -44,7 +44,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 if (profiles != value)
                 {
                     profiles = value;
-                    OnPropertyChanged("Profiles");
+                    OnPropertyChange("Profiles");
                 }
             }
         }
@@ -60,7 +60,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 if (selectedProfile != value)
                 {
                     selectedProfile = value;
-                    OnPropertyChanged("SelectedProfile");
+                    OnPropertyChange("SelectedProfile");
                 }
             }
         }
@@ -76,7 +76,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         //        if (selectedProfile.Profile_name != value)
         //        {
         //            selectedProfile.Profile_name = value;
-        //            OnPropertyChanged("SelectedProfileName");
+        //            OnPropertyChange("SelectedProfileName");
         //        }
         //    }
         //}
@@ -92,7 +92,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 if (newProfileName != value)
                 {
                     newProfileName = value;
-                    OnPropertyChanged("NewProfileName");
+                    OnPropertyChange("NewProfileName");
                 }
             }
         }
@@ -173,14 +173,14 @@ namespace Games_SaveFiles_Manager.ViewModels
                 if (editMode != value)
                 {
                     editMode = value;
-                    OnPropertyChanged("EditMode");
+                    OnPropertyChange("EditMode");
                 }
             }
         }
         #endregion
 
         #region Events
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
         #endregion
 
         #region Constructors
@@ -192,11 +192,11 @@ namespace Games_SaveFiles_Manager.ViewModels
         #endregion
 
         #region Methods
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged ?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //public void OnPropertyChange(string propertyName)
+        //{
+        //    PropertyChanged ?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-        }
+        //}
 
         /// <summary>
         /// Method formerly used for loading profiles. It no longer has any use (and should NOT be used at any time, it's only kept for archival purposes)

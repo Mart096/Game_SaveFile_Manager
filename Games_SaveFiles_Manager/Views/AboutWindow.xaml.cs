@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Deployment.Application;
+using Games_SaveFiles_Manager.ViewModels;
 
 namespace Games_SaveFiles_Manager
 {
@@ -20,29 +21,13 @@ namespace Games_SaveFiles_Manager
     /// </summary>
     public partial class AboutWindow : Window
     {
+        private AboutViewModel ViewModel;
+
         public AboutWindow()
         {
             InitializeComponent();
-            Get_App_Version();
-        }
-
-        public void Get_App_Version()
-        {
-            string version = null;
-
-            try
-            {
-                version = ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString();
-            }
-            catch (InvalidDeploymentException)
-            {
-                //MessageBox.Show("Failed to read application's version!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                version = "1.0.0.1";
-            }
-            finally
-            {
-                version_label.Content = version;
-            }
+            ViewModel = new AboutViewModel();
+            DataContext = ViewModel;
         }
     }
 }

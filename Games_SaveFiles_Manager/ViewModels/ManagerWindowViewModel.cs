@@ -15,7 +15,7 @@ using System.Xml.Linq;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
-    class ManagerWindowViewModel : INotifyPropertyChanged
+    class ManagerWindowViewModel : ViewModelBase
     {
         #region Fields
         private ObservableCollection<Game> games = new ObservableCollection<Game>();
@@ -138,7 +138,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
         #region Events
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        //public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
 
@@ -206,13 +206,13 @@ namespace Games_SaveFiles_Manager.ViewModels
         //    }
         // }
 
-        protected void OnPropertyChange(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        //protected new void OnPropertyChange(string propertyName)
+        //{
+        //    if (PropertyChanged != null)
+        //    {
+        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        //    }
+        //}
 
         //private void Load_Profiles_List() //this method has been retired from use
         //{

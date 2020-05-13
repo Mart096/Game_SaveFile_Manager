@@ -78,6 +78,7 @@
     <Compile Include="ProfileChangeFailedException.cs" />
     <Compile Include="SaveStoreDecisionToBoolConverter.cs" />
     <Compile Include="UtilClass.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\GameListManagerViewModel.cs" />
     <Compile Include="ViewModels\ManagerWindowViewModel.cs" />
     <Compile Include="ViewModels\ProfileManagerViewModel.cs" />
@@ -97,6 +98,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\AboutWindow.xaml.cs">
       <DependentUpon>AboutWindow.xaml</DependentUpon>
     </Compile>

@@ -11,9 +11,18 @@
         <local:BoolToVisibilityConverter x:Key="BoolToVisConv"/>
         <local:SaveStoreDecisionToBoolConverter x:Key="SaveStoreDecisionConverter"/>
     </Window.Resources>
-    
-    
+
+
     <Grid>
+        <Grid.RowDefinitions>
+
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
         <Label Content="Game" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0"/>
         <ListBox x:Name="games_listbox" HorizontalAlignment="Left" Width="190" Margin="10,26,0,10" ItemsSource="{Binding Games}" SelectedItem="{Binding SelectedGame}" >
             <ListBox.ItemTemplate>
@@ -24,41 +33,31 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <!--SelectionChanged="Games_listbox_SelectionChanged"--> <!--ItemBindingGroup="{Binding Game_name}"-->
-        
-        
-        <Label Content="Game name" HorizontalAlignment="Left" Margin="200,21,0,0" VerticalAlignment="Top" Height="26" Width="153"/>
-        <TextBox x:Name="game_name_textbox" IsReadOnly="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}, FallbackValue=true}" Height="23" Margin="206,52,18,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding SelectedGame.Game_name}"/>
+        <!--SelectionChanged="Games_listbox_SelectionChanged"-->
+        <!--ItemBindingGroup="{Binding Game_name}"-->
 
-        <Label Content="Save file directory path" HorizontalAlignment="Left" Margin="200,83,0,0" VerticalAlignment="Top" Height="26" Width="153"/>
-        <TextBox x:Name="save_file_directory_path_textbox" IsReadOnly="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}, FallbackValue=true}" Height="23" Margin="206,109,18,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding SelectedGame.Save_file_location}"/>
+        <!--<StackPanel Grid.Column="1">-->
+        <Label Content="Game name" HorizontalAlignment="Left" Margin="5,21,0,0" VerticalAlignment="Top" Height="26" Width="153" Grid.Column="1"/>
+        <TextBox x:Name="game_name_textbox" IsReadOnly="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}, FallbackValue=true}" Height="23" Margin="11,52,18,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding SelectedGame.Game_name}" Grid.Column="1"/>
+
+        <Label Content="Save file directory path" HorizontalAlignment="Left" Margin="5,83,0,0" VerticalAlignment="Top" Height="26" Width="153" Grid.Column="1"/>
+        <TextBox x:Name="save_file_directory_path_textbox" IsReadOnly="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}, FallbackValue=true}" Height="23" Margin="11,109,18,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding SelectedGame.Save_file_location}" Grid.Column="1"/>
+
+        <RadioButton Name="save_store_decision_radarbox1" Content="Store profile's save files in game save files' directory" HorizontalAlignment="Left" Margin="11,142,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=appdir}" Grid.Column="1"/>
+        <RadioButton Name="save_store_decision_radarbox2" Content="Keep profile's save files in the manager's directory" HorizontalAlignment="Left" Margin="11,162,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=local}" Grid.Column="1"/>
+
+        <!--<CheckBox Height="20" Width="50" HorizontalAlignment="Left" Grid.Column="1" Margin="11,182,19,194"/>-->
+
+        <Button x:Name="edit_button" Content="Edit" IsEnabled="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}, FallbackValue=True}" HorizontalAlignment="Left" Margin="5,228,0,0" VerticalAlignment="Top" Width="75" Visibility="{Binding ElementName=edit_button, Path=IsEnabled, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" Command="{Binding ActivateEditModeCommand}" Grid.Column="1"/>
+        <Button x:Name="cancel_edit_button" Content="Cancel" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="5,228,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DeactivateEditModeCommand}" Grid.Column="1"/>
+        <Button x:Name="save_changes_button" Content="Save changes" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="85,228,0,0" VerticalAlignment="Top" Width="75" Command="{Binding SaveChangesToGameDataCommand}" Grid.Column="1"/>
+
+        <Label Content="New game name" HorizontalAlignment="Left" Margin="5,307,0,0" VerticalAlignment="Top" Height="26" Width="153" Grid.Column="1"/>
+        <TextBox Height="23" Margin="6,338,19,0" TextWrapping="Wrap" x:Name="new_game_name_textbox" IsReadOnly="False" VerticalAlignment="Top" RenderTransformOrigin="0.54,0.389" Text="{Binding NewGameName, Mode=TwoWay}" Grid.Column="1"/>
+        <Button x:Name="add_new_game_button" Content="Add new game" Margin="5,366,19,0" VerticalAlignment="Top" Command="{Binding AddNewGameCommand}" Grid.Column="1"/>
+        <!--</StackPanel>-->
 
 
 
-        <RadioButton Name="save_store_decision_radarbox1" Content="Store profile's save files in game save files' directory" HorizontalAlignment="Left" Margin="206,139,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=appdir}"/>
-        <RadioButton Name="save_store_decision_radarbox2" Content="Keep profile's save files in the manager's directory" HorizontalAlignment="Left" Margin="206,159,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=local}"/>
-        <!--<ListBox ItemsSource="{Binding }" Margin="371,179,18,93" >
-            <ListBox.ItemContainerStyle>
-                <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                <RadioButton Content="{TemplateBinding Content}"
-                                     IsChecked="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=IsSelected}"/>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListBox.ItemContainerStyle>
-        </ListBox>-->
-            
-
-        <Button x:Name="edit_button" Content="Edit" IsEnabled="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}}" HorizontalAlignment="Left" Margin="205,228,0,0" VerticalAlignment="Top" Width="75" Visibility="{Binding ElementName=edit_button, Path=IsEnabled, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" Command="{Binding ActivateEditModeCommand}"/>
-        <Button x:Name="save_changes_button" Content="Save changes" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="285,228,0,0" VerticalAlignment="Top" Width="75" Command="{Binding SaveChangesToGameDataCommand}"/>
-        <Button x:Name="cancel_edit_button" Content="Cancel" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="205,228,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DeactivateEditModeCommand}"/>
-
-        <Label Content="New game name" HorizontalAlignment="Left" Margin="205,307,0,0" VerticalAlignment="Top" Height="26" Width="153"/>
-        <TextBox Height="23" Margin="206,338,19,0" TextWrapping="Wrap" x:Name="new_game_name_textbox" IsReadOnly="False" VerticalAlignment="Top" RenderTransformOrigin="0.54,0.389" Text="{Binding NewGameName, Mode=TwoWay}"/>
-        <Button x:Name="add_new_game_button" Content="Add new game" Margin="205,366,19,0" VerticalAlignment="Top" Command="{Binding AddNewGameCommand}"/>
     </Grid>
 </Window>
