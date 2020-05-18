@@ -18,11 +18,14 @@ namespace Games_SaveFiles_Manager.ViewModels
     {
         #region Fields
         private ObservableCollection<Game> games = new ObservableCollection<Game>();
+        private ObservableCollection<string> filesToBeManaged = new ObservableCollection<string>();
         private Game selectedGame;
         private Game tempSelectedGameData;
         private string newGameName = "";
         private bool editMode = false;
         private string applicationDataFilePath;
+        private bool manageSelectedFilesOnlyFlag = false;
+        private string selectedFileToManage;
         //private bool saveFileMode1 = true; //this implementation is wrong. RadioButton property IsCheked does not update.
         //private bool saveFileMode2 = false;
         //private ObservableCollection<string> saveFileMode_list = new ObservableCollection<string>();
@@ -32,6 +35,8 @@ namespace Games_SaveFiles_Manager.ViewModels
         private ICommand _deactivateEditModeCommand;
         private ICommand _saveChangesToGameDataCommand;
         private ICommand _addNewGameCommand;
+        private ICommand _addFileToListOfManagedFilesCommand;
+        private ICommand _removeFileFromListOfManagedFilesCommand;
         
         #endregion
 
@@ -52,6 +57,22 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
+        public ObservableCollection<string> FilesToBeManaged
+        {
+            get
+            {
+                return filesToBeManaged;
+            }
+            set
+            {
+                if(filesToBeManaged != value)
+                {
+                    filesToBeManaged = value;
+                    OnPropertyChange("FilesToBeManaged");
+                }
+            }
+        }
+
         public Game SelectedGame
         {
             get
@@ -62,7 +83,15 @@ namespace Games_SaveFiles_Manager.ViewModels
             {
                 if (selectedGame != value)
                 {
+                    FilesToBeManaged.Clear();
                     selectedGame = value;
+                    if (selectedGame.ManageSelectedFilesOnly == true)
+                    {
+                        foreach (string filename in selectedGame.FilesToManage)
+                        {
+                            FilesToBeManaged.Add(filename);
+                        }
+                    }
                     OnPropertyChange("SelectedGame");
                 }
             }
@@ -101,6 +130,22 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
+        public string SelectedFileToManage
+        {
+            get
+            {
+                return selectedFileToManage;
+            }
+            set
+            {
+                if(selectedFileToManage != value)
+                {
+                    selectedFileToManage = value;
+                    OnPropertyChange("SelectedFileToManage");
+                }
+            }
+        }
+
         //public bool SaveFileMode1
         //{
         //    get
@@ -117,7 +162,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         //        }
         //    }
         //}
-            
+
         //public bool SaveFileMode2
         //{
         //    get
@@ -209,6 +254,52 @@ namespace Games_SaveFiles_Manager.ViewModels
             }
         }
 
+        public ICommand AddFileToListOfManagedFilesCommand
+        {
+            get
+            {
+                if(_addFileToListOfManagedFilesCommand == null)
+                {
+                    _addFileToListOfManagedFilesCommand = new CommandHandler(
+                        param => Add_file_to_list_of_managed_files());
+                }
+                return _addFileToListOfManagedFilesCommand;
+            }
+        }
+
+        public ICommand RemoveFileFromListOfManagedFilesCommand
+        {
+            get
+            {
+                if (_removeFileFromListOfManagedFilesCommand == null)
+                {
+                    _removeFileFromListOfManagedFilesCommand = new CommandHandler(
+                        param => Remove_file_from_list_of_managed_files());
+                }
+                return _removeFileFromListOfManagedFilesCommand;
+            }
+        }
+
+        public bool ManageSelectedFilesOnlyFlag
+        {
+            get
+            {
+                return manageSelectedFilesOnlyFlag;
+            }
+            set
+            {
+                if(manageSelectedFilesOnlyFlag != value)
+                {
+                    manageSelectedFilesOnlyFlag = value;
+                    //if(manageSelectedFilesOnlyFlag == true)
+                    //{
+                    //    //load files from directory
+                    //}
+                    OnPropertyChange("ManageSelectedFilesOnlyFlag");
+                }
+            }
+        }
+
         #endregion
 
         #region Events
@@ -288,6 +379,8 @@ namespace Games_SaveFiles_Manager.ViewModels
         private void LoadApplicationData(string path)
         {
             Games.Clear(); //games_listbox.Items.Clear();
+            FilesToBeManaged.Clear();
+
             try
             {
                 applicationDataFilePath = path;
@@ -316,6 +409,24 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                         gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
 
+                        bool node_exists = item.Elements("Manage_selected_files_only").Any();
+                        if (node_exists == false)
+                        {
+                            gi_ob.ManageSelectedFilesOnly = false;
+                        }
+                        else
+                        {
+                            gi_ob.ManageSelectedFilesOnly = Convert.ToBoolean(item.Element("Manage_selected_files_only").Value);
+                        }
+
+                        if (item.Elements("Files_to_manage").Any())//.Elements("File").Any())
+                        {
+                            if(item.Element("Files_to_manage").Elements("File").Any())
+                                foreach (string filename in item.Element("Files_to_manage").Elements("File"))
+                                {
+                                    gi_ob.FilesToManage.Add(filename);
+                                }
+                        }
                         //games_listbox.Items.Add(gi_ob);
                         Games.Add(gi_ob);
                     }
@@ -343,13 +454,15 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                     int query = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
                                  where item.Element("Name").Value == NewGameName
-                                 select item).Count(); //get number of added games
+                                 select item).Count(); //get number of added games with the name specified for a new one
 
                     if (query == 0) //there are no games with such name. Duplicate games prevention measure.
                         using (FileStream fs = new FileStream(applicationDataFilePath, FileMode.Open, FileAccess.ReadWrite))
                         {
                             xdoc.Element("Game_save_file_manager").Element("Games").Add(new XElement("Game",
-                                new XElement("Id", " "), new XElement("Name", NewGameName), new XElement("Save_file_location", ""), new XElement("Store_profile_saves_in_app_location", "1")));
+                                new XElement("Id", " "), new XElement("Name", NewGameName), new XElement("Save_file_location", ""), 
+                                new XElement("Store_profile_saves_in_app_location", "1"), new XElement("Manage_selected_files_only", "false"), 
+                                new XElement("Files_to_manage")));
                             xdoc.Save(fs);
                             fs.Close();
                         }
@@ -392,7 +505,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     }
 
                     Game temp_game_item = tempSelectedGameData;
-                    var query = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
+                    XElement query = (from item in xdoc.Element("Game_save_file_manager").Element("Games").Elements("Game")
                                  where (string)item.Element("Name").Value == temp_game_item.Game_name //create field containing temporary game name or use Game fields' values
                                  select item).First();
                     //Same as above, but with lambda expression
@@ -409,6 +522,35 @@ namespace Games_SaveFiles_Manager.ViewModels
                     else if (!Directory.Exists(SelectedGame.Save_file_location))
                     {
                         throw new DirectoryNotFoundException();
+                    }
+
+                    
+                    bool node_exists = query.Elements("Manage_selected_files_only").Any();
+                    if (node_exists == false)
+                    {
+                        query.Add(new XElement("Manage_selected_files_only", SelectedGame.ManageSelectedFilesOnly.ToString()));
+                    }
+                    else
+                        query.Element("Manage_selected_files_only").SetValue(SelectedGame.ManageSelectedFilesOnly.ToString());
+
+                    //add files to list of managed files
+                    if (SelectedGame.ManageSelectedFilesOnly == true && !temp_game_item.FilesToManage.Equals(FilesToBeManaged.ToList<string>()))
+                    {
+                        List<string> new_filenames_list = FilesToBeManaged.ToList<string>();
+                        //var subquery = from item in query.Element("Files_to_manage").Elements("Files") select item;
+                        if(query.Elements("Files_to_manage").Any())
+                        {
+                            query.Element("Files_to_manage").Elements("File").Remove();
+                        }
+                        else
+                        {
+                            query.Add(new XElement("Files_to_manage"));
+                        }
+
+                        foreach (string filename in new_filenames_list)
+                        {
+                            query.Element("Files_to_manage").Add(new XElement("File", filename));
+                        }
                     }
 
                     //if save file storage method had been changed, game's element will be updated and prompt will be displayed to the user, asking if manager should move files to a new directory
@@ -469,6 +611,43 @@ namespace Games_SaveFiles_Manager.ViewModels
             EditMode = false;
             //Load_Games_List();
             LoadApplicationData(applicationDataFilePath);
+        }
+
+        private void Add_file_to_list_of_managed_files()
+        {
+            try
+            {
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                dlg.InitialDirectory = SelectedGame.Save_file_location;
+
+                Nullable<bool> result = dlg.ShowDialog();
+
+                if (result == true)
+                {
+                    List<string> selected_filenames = dlg.FileNames.ToList<string>();
+
+                    foreach (string selected_filename in selected_filenames)
+                    {
+                        FileInfo finfo = new FileInfo(selected_filename);
+
+                        if(!FilesToBeManaged.Contains(selected_filename) && string.Equals(finfo.DirectoryName, SelectedGame.Save_file_location))
+                            FilesToBeManaged.Add(finfo.Name);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Failed to add file names into list.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                FilesToBeManaged.Clear();
+            }
+        }
+
+        private void Remove_file_from_list_of_managed_files()
+        {
+            if (SelectedFileToManage != null)
+            {
+                FilesToBeManaged.Remove(SelectedFileToManage);
+            }
         }
 
         private void FileNotFoundMethod(string path)

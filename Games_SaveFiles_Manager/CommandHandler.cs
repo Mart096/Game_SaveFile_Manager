@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -41,10 +42,10 @@ namespace Games_SaveFiles_Manager
 
         #region ICommand Members
 
-        //[DebuggerStepThrough]
+        [DebuggerStepThrough]
         public bool CanExecute(object parameters)
         {
-            return _canExecute == null ? true : _canExecute(parameters); //this part should be modified.
+            return _canExecute == null ? true : _canExecute(parameters);
         }
 
         public event EventHandler CanExecuteChanged

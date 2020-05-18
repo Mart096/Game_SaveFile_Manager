@@ -9,17 +9,22 @@ namespace Games_SaveFiles_Manager.Models
     public class Game
     {
         #region Fields
-        private string game_name;
-        private string save_file_location;
-        private int profile_specific_save_file_storage_method;
-        private string profile_used;
+        private string _game_name;
+        private string _save_file_location;
+        private int _profile_specific_save_file_storage_method;
+        private string _profile_used;
+        private bool _manageSelectedFilesOnly;
+        private List<string> _filesToManage = new List<string>();
         #endregion
 
         #region Fields
-        public string Game_name { get => game_name; set => game_name = value; }
-        public string Save_file_location { get => save_file_location; set => save_file_location = value; }
-        public int Profile_specific_save_file_storage_method { get => profile_specific_save_file_storage_method; set => profile_specific_save_file_storage_method = value; }
-        public string Profile_used { get => profile_used; set => profile_used = value; }
+        public string Game_name { get => _game_name; set => _game_name = value; }
+        public string Save_file_location { get => _save_file_location; set => _save_file_location = value; }
+        public int Profile_specific_save_file_storage_method { get => _profile_specific_save_file_storage_method; set => _profile_specific_save_file_storage_method = value; }
+        public string Profile_used { get => _profile_used; set => _profile_used = value; }
+        public bool ManageSelectedFilesOnly { get { return _manageSelectedFilesOnly; } set => _manageSelectedFilesOnly = value; }
+        public List<string> FilesToManage { get { return _filesToManage; } set => _filesToManage = value; } // = new List<string>();
+
         #endregion
 
         #region Constructors
@@ -27,8 +32,9 @@ namespace Games_SaveFiles_Manager.Models
         {
             Game_name = "Undefined";
             Save_file_location = "";
-            profile_specific_save_file_storage_method = -1;
-            profile_used = "default";
+            Profile_specific_save_file_storage_method = -1;
+            Profile_used = "default";
+            ManageSelectedFilesOnly = false;
         }
 
         public Game(Game game)
@@ -38,7 +44,8 @@ namespace Games_SaveFiles_Manager.Models
                 Game_name = game.Game_name;
                 Save_file_location = game.Save_file_location;
                 Profile_specific_save_file_storage_method = game.Profile_specific_save_file_storage_method;
-                profile_used = "default";
+                Profile_used = "default";
+                ManageSelectedFilesOnly = false;
             }
         }
 
@@ -47,7 +54,8 @@ namespace Games_SaveFiles_Manager.Models
             Game_name = new_game_name;
             Save_file_location = new_game_save_file_location;
             Profile_specific_save_file_storage_method = new_game_save_file_storage_method;
-            profile_used = "default";
+            Profile_used = "default";
+            ManageSelectedFilesOnly = false;
         }
         #endregion
 

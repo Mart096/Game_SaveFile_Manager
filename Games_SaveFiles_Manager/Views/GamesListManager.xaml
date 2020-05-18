@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Games_SaveFiles_Manager"
         mc:Ignorable="d"
-        Title="Games list manager" Height="427" Width="520" MinHeight="427" MinWidth="520">
+        Title="Games list manager" Height="427" MinHeight="427" MinWidth="520">
     <Window.Resources>
         <local:BoolToNegativeBoolConverter x:Key="BoolToNegBoolConv"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisConv"/>
@@ -46,16 +46,25 @@
         <RadioButton Name="save_store_decision_radarbox1" Content="Store profile's save files in game save files' directory" HorizontalAlignment="Left" Margin="11,142,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=appdir}" Grid.Column="1"/>
         <RadioButton Name="save_store_decision_radarbox2" Content="Keep profile's save files in the manager's directory" HorizontalAlignment="Left" Margin="11,162,0,0" VerticalAlignment="Top" GroupName="radiobutton_group1" IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.Profile_specific_save_file_storage_method, Mode=TwoWay, Converter={StaticResource SaveStoreDecisionConverter}, ConverterParameter=local}" Grid.Column="1"/>
 
-        <!--<CheckBox Height="20" Width="50" HorizontalAlignment="Left" Grid.Column="1" Margin="11,182,19,194"/>-->
+        <CheckBox IsEnabled="{Binding EditMode, FallbackValue=False}" IsChecked="{Binding SelectedGame.ManageSelectedFilesOnly}" Content="Manage selected files only" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" Margin="11,182,19,194"/>
 
         <Button x:Name="edit_button" Content="Edit" IsEnabled="{Binding EditMode, Converter={StaticResource BoolToNegBoolConv}, FallbackValue=True}" HorizontalAlignment="Left" Margin="5,228,0,0" VerticalAlignment="Top" Width="75" Visibility="{Binding ElementName=edit_button, Path=IsEnabled, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" Command="{Binding ActivateEditModeCommand}" Grid.Column="1"/>
         <Button x:Name="cancel_edit_button" Content="Cancel" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="5,228,0,0" VerticalAlignment="Top" Width="75" Command="{Binding DeactivateEditModeCommand}" Grid.Column="1"/>
         <Button x:Name="save_changes_button" Content="Save changes" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisConv}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="85,228,0,0" VerticalAlignment="Top" Width="75" Command="{Binding SaveChangesToGameDataCommand}" Grid.Column="1"/>
 
-        <Label Content="New game name" HorizontalAlignment="Left" Margin="5,307,0,0" VerticalAlignment="Top" Height="26" Width="153" Grid.Column="1"/>
-        <TextBox Height="23" Margin="6,338,19,0" TextWrapping="Wrap" x:Name="new_game_name_textbox" IsReadOnly="False" VerticalAlignment="Top" RenderTransformOrigin="0.54,0.389" Text="{Binding NewGameName, Mode=TwoWay}" Grid.Column="1"/>
-        <Button x:Name="add_new_game_button" Content="Add new game" Margin="5,366,19,0" VerticalAlignment="Top" Command="{Binding AddNewGameCommand}" Grid.Column="1"/>
+        <Label Content="New game name" HorizontalAlignment="Left" Margin="5,260,0,0" VerticalAlignment="Top" Height="26" Width="153" Grid.Column="1"/>
+        <TextBox Height="22" Margin="6,292,19,0" TextWrapping="Wrap" x:Name="new_game_name_textbox" IsReadOnly="False" VerticalAlignment="Top" RenderTransformOrigin="0.54,0.389" Text="{Binding NewGameName, Mode=TwoWay}" Grid.Column="1"/>
+        <Button x:Name="add_new_game_button" Content="Add new game" Margin="5,320,19,0" VerticalAlignment="Top" Command="{Binding AddNewGameCommand}" Grid.Column="1"/>
         <!--</StackPanel>-->
+
+        <StackPanel IsEnabled="{Binding SelectedGame.ManageSelectedFilesOnly}" Visibility="{Binding SelectedGame.ManageSelectedFilesOnly, Converter={StaticResource BoolToVisConv}}" Grid.Column="2" VerticalAlignment="Stretch">
+            <Label Content="Files" Margin="5,21, 0, 0"/>
+            <ListView IsEnabled="{Binding EditMode}" Width="160" SelectionMode="Single" ItemsSource="{Binding FilesToBeManaged}" SelectedItem="{Binding SelectedFileToManage}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinHeight="200" Margin="10, 0, 10, 0"/>
+            <StackPanel Margin="0, 5, 0, 5" Orientation="Horizontal" >
+                <Button Command="{Binding AddFileToListOfManagedFilesCommand}" IsEnabled="{Binding EditMode}" Content="Add file" Width="70" Margin="15, 5, 0, 0" />
+                <Button Command="{Binding RemoveFileFromListOfManagedFilesCommand}" IsEnabled="{Binding EditMode}" Content="Remove file" Width="70" Margin="10, 5, 0, 0" />
+            </StackPanel>
+        </StackPanel>
 
 
 

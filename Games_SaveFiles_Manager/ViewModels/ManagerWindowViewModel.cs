@@ -22,7 +22,7 @@ namespace Games_SaveFiles_Manager.ViewModels
         private ObservableCollection<Profile> profiles = new ObservableCollection<Profile>();
         private Game selectedGame;
         private Profile selectedProfile;
-        private ICommand _getCommand;
+        //private ICommand _getCommand;
         private ICommand _applyProfileCommand;
         private ICommand _verifySaveFilePathCommand;
         private ICommand _openSaveFilesDirectoryInExplroreCommand;
@@ -371,6 +371,8 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                     if (Directory.Exists(temp_path))
                     {
+                        //TODO move selected files ONLY if "manage selected files only" checkbox is checked
+
                         var files_in_directory = Directory.GetFiles(temp_path);
                         if (method == 1) //1st method
                         {
@@ -479,7 +481,7 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                             if (method == 1)
                             {
-                                if (!(Directory.Exists(UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, game_name))));  //temp_path + "\\..\\" + game_name + "_managerprofiles\\")))
+                                if (!(Directory.Exists(UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, game_name))))  //temp_path + "\\..\\" + game_name + "_managerprofiles\\")))
                                 {
                                     string new_path = UtilClass.GetManagerProfilesDirectoryOfAGame(temp_path, game_name); //temp_path + "\\..\\" + game_name + "_managerprofiles";
                                     Directory.CreateDirectory(new_path);
