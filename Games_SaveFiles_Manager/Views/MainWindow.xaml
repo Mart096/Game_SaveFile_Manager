@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Games_SaveFiles_Manager"
+        xmlns:Models="clr-namespace:Games_SaveFiles_Manager.Models"
         mc:Ignorable="d"
         Title="Save files manager" Height="450" Width="628" MinWidth="628" MinHeight="450">
     <Grid>
@@ -18,12 +19,13 @@
                 <MenuItem Name="menu_quit_button" Header="Quit" Click="Menu_quit_button_Click"/>
             </MenuItem>
             <MenuItem Header="Profiles &amp; Games">
-                <MenuItem Header="Manage profiles' list" Click="Manage_Profiles_List_Click"/>
-                <MenuItem Header="Manage games' list" Click="Manage_Games_List_Click"/>
+                <MenuItem Header="Manage profile list" Click="Manage_Profiles_List_Click"/>
+                <MenuItem Header="Manage game list" Click="Manage_Games_List_Click"/>
             </MenuItem>
         </Menu>
-
-        <Label Grid.Row="1" Content="Profile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
+        
+        <local:GameSaveManagementUserControl HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1"/>
+        <!--<Label Grid.Row="1" Content="Profile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0"/>
         <Label Grid.Row="1" Content="Game" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="120,10,0,0"/>
         <ListBox Name="profile_listbox"  Grid.Row="1" HorizontalAlignment="Left" Width="100" Margin="10,41,0,10"/>
         <ListBox Name="games_listbox" Grid.Row="1" HorizontalAlignment="Left" Width="190" Margin="120,41,0,10"/>
@@ -35,7 +37,7 @@
             <TextBlock TextWrapping="WrapWithOverflow" TextAlignment="Center" Width="96">
                 Change save file's directory
             </TextBlock>
-        </Button>
+        </Button>-->
 
     </Grid>
 </Window>

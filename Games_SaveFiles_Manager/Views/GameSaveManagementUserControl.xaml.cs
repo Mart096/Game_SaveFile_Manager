@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Games_SaveFiles_Manager.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,17 +11,23 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Games_SaveFiles_Manager
 {
     /// <summary>
-    /// Logika interakcji dla klasy ProfileManagerWindow.xaml
+    /// Logika interakcji dla klasy GameSaveManagementUserControl.xaml
     /// </summary>
-    public partial class ProfileManagerWindow : Window
+    public partial class GameSaveManagementUserControl : UserControl
     {
-        public ProfileManagerWindow()
+
+        private ManagerWindowViewModel viewModel;
+
+        public GameSaveManagementUserControl()
         {
+            viewModel = new ManagerWindowViewModel();
+            this.DataContext = viewModel;
             InitializeComponent();
         }
     }

@@ -49,6 +49,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameSaveManagerUTest1.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -59,6 +60,10 @@
     <ProjectReference Include="..\ConsoleApp1\ConsoleApp1.csproj">
       <Project>{d2484dfc-220d-4c41-8b49-c991f27c8305}</Project>
       <Name>ConsoleApp1</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Games_SaveFiles_Manager\Games_SaveFiles_Manager.csproj">
+      <Project>{d8dac3e1-5ad5-4f61-88e4-4ac9c5c78b2c}</Project>
+      <Name>Games_SaveFiles_Manager</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

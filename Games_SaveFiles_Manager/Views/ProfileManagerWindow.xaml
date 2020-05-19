@@ -1,0 +1,32 @@
+﻿<Window x:Class="Games_SaveFiles_Manager.ProfileManagerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Games_SaveFiles_Manager"
+        mc:Ignorable="d"
+        Title="Profile management" Height="356.676" Width="286.08" MinHeight="365" MinWidth="286">
+
+    <Window.Resources>
+        <local:BoolToNegativeBoolConverter x:Key="BoolToNegativeConverter"/>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Label Content="Profile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="100"/>
+        <ListBox x:Name="profile_listbox" HorizontalAlignment="Left" Width="100" Margin="10,36,0,10" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile, Mode=TwoWay}"/>
+
+        <Label Content="Profile name" HorizontalAlignment="Left" Margin="115,10,0,0" VerticalAlignment="Top" Height="26" Width="153"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="115,36,0,0" TextWrapping="Wrap" Name="selected_profile_name_textbox" IsReadOnly="{Binding EditMode, Converter={StaticResource BoolToNegativeConverter}}" VerticalAlignment="Top" Width="153" RenderTransformOrigin="0.54,0.389" Text="{Binding SelectedProfile.Profile_name}"/>
+        <Button Name="edit_selected_profile_button" Content="Edit" IsEnabled="{Binding EditMode, Converter={StaticResource BoolToNegativeConverter}}" Visibility="{Binding ElementName=edit_selected_profile_button, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="115,64,0,0" VerticalAlignment="Top" Width="75" Command="{Binding EditProfileCommand}"/>
+        <Button x:Name="delete_selected_profile_button" Content="Delete" IsEnabled="{Binding EditMode, Converter={StaticResource BoolToNegativeConverter}}" Visibility="{Binding ElementName=delete_selected_profile_button, Path=IsEnabled, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalAlignment="Left" Margin="195,64,0,0" VerticalAlignment="Top" Width="73" Command="{Binding DeleteProfileCommand}"/>
+
+        <Button Name="save_changes_button" Content="Save changes" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisibilityConverter}, FallbackValue=Hidden}" HorizontalAlignment="Left" Margin="115,64,0,0" VerticalAlignment="Top" Width="75" Command="{Binding SaveChangesCommand}"/>
+        <Button x:Name="cancel_edit_selected_profile_button" Content="Cancel" IsEnabled="{Binding EditMode}" Visibility="{Binding EditMode, Converter={StaticResource BoolToVisibilityConverter}}" HorizontalAlignment="Left" Margin="195,64,0,0" VerticalAlignment="Top" Width="73" Command="{Binding CancelChangesCommand}"/>
+        
+        <Label Content="New profile name" HorizontalAlignment="Left" Margin="115,234,0,0" VerticalAlignment="Top" Height="26" Width="153"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="115,265,0,0" TextWrapping="Wrap" x:Name="new_profile_name_textbox" IsReadOnly="{Binding EditMode}" VerticalAlignment="Top" Width="153" RenderTransformOrigin="0.54,0.389" Text="{Binding NewProfileName}"/>
+        <Button Name="add_new_profile_button" Content="Add new profile" IsEnabled="{Binding EditMode, Converter={StaticResource BoolToNegativeConverter}}" HorizontalAlignment="Left" Margin="115,296,0,0" VerticalAlignment="Top" Width="153" Command="{Binding AddNewProfileCommand}"/>
+        
+
+    </Grid>
+</Window>
