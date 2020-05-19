@@ -1,16 +1,13 @@
-﻿using System;
+﻿using Games_SaveFiles_Manager.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
-using Games_SaveFiles_Manager.Models;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {

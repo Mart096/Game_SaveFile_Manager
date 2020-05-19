@@ -324,6 +324,25 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                         gi_ob.Profile_specific_save_file_storage_method = Convert.ToInt32(temp_profile_specific_file_storage_method);
 
+                        bool node_exists = item.Elements("Manage_selected_files_only").Any();
+                        if (node_exists == false)
+                        {
+                            gi_ob.ManageSelectedFilesOnly = false;
+                        }
+                        else
+                        {
+                            gi_ob.ManageSelectedFilesOnly = Convert.ToBoolean(item.Element("Manage_selected_files_only").Value);
+                        }
+
+                        if (item.Elements("Files_to_manage").Any())
+                        {
+                            if (item.Element("Files_to_manage").Elements("File").Any())
+                                foreach (string filename in item.Element("Files_to_manage").Elements("File"))
+                                {
+                                    gi_ob.FilesToManage.Add(filename);
+                                }
+                        }
+
                         gi_ob.Profile_used = item.Element("Profile_used").Value;
 
                         Games.Add(gi_ob);
@@ -361,6 +380,7 @@ namespace Games_SaveFiles_Manager.ViewModels
             string temp_path = SelectedGame.Save_file_location; //game save files' directory
             string previous_profile_name = SelectedGame.Profile_used; //currently active profile for games
             int method = SelectedGame.Profile_specific_save_file_storage_method; //method chosen for profiles' game save files storage
+            bool selectedFilesOnly = SelectedGame.ManageSelectedFilesOnly; //decideds if only specific files should be moved around
             List<string> files_in_selected_profile_directory=new List<string>();
 
             try
@@ -373,7 +393,22 @@ namespace Games_SaveFiles_Manager.ViewModels
                     {
                         //TODO move selected files ONLY if "manage selected files only" checkbox is checked
 
-                        var files_in_directory = Directory.GetFiles(temp_path);
+                        List<string> files_in_directory = new List<string>();
+
+                        if(selectedFilesOnly == true)
+                        {
+                            foreach (string filename in SelectedGame.FilesToManage)
+                            {
+                                files_in_directory.Add(temp_path + "\\" + filename);
+                            }
+
+                            //files_in_directory.AddRange(Directory.GetFiles(temp_path).ToList());
+                        }
+                        else
+                        {
+                            files_in_directory.AddRange(Directory.GetFiles(temp_path).ToList());
+                        }
+                        
                         if (method == 1) //1st method
                         {
                             //string[] files_in_selected_profile_directory = Directory.GetFiles(temp_path + "\\..\\" + SelectedProfile.Profile_name);
@@ -401,7 +436,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                             //copy save game files of current profile to profile directory
                             foreach (string file in files_in_directory)
                             {
-                                File.Copy(file,UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(SelectedGame.Game_name, previous_profile_name) + Path.GetFileName(file), true); //AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name + "\\"+ Path.GetFileName(file)
+                                File.Copy(file, UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(SelectedGame.Game_name, previous_profile_name) + Path.GetFileName(file), true); //AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name + "\\"+ Path.GetFileName(file)
                                 Debug.Print("Copy file: \"" + Path.GetFileName(file) + "\" from " + file + " to " + UtilClass.GetManagerProfilesDirectoryOfAGameInManagerDirectory(SelectedGame.Game_name, previous_profile_name)); //AppDomain.CurrentDomain.BaseDirectory + "games\\" + SelectedGame.Game_name + "\\" + previous_profile_name);
                             }
 

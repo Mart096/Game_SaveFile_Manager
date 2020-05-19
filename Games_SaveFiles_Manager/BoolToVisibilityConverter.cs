@@ -21,7 +21,7 @@ namespace Games_SaveFiles_Manager
             }
             else
             {
-                return Visibility.Hidden;
+                return Visibility.Collapsed;
             }
         }
 
