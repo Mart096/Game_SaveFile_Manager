@@ -83,7 +83,8 @@
     <Compile Include="BoolToVisibilityConverter.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="IntToSaveMethodConverter.cs" />
-    <Compile Include="Mediator.cs" />
+    <Compile Include="MediatorComms\Mediator.cs" />
+    <Compile Include="MediatorComms\MultiDictionary.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="ProfileChangeFailedException.cs" />
     <Compile Include="SaveStoreDecisionToBoolConverter.cs" />

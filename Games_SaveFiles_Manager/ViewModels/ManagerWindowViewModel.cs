@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
+using Games_SaveFiles_Manager.MediatorComms;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
@@ -149,6 +150,19 @@ namespace Games_SaveFiles_Manager.ViewModels
             //Load_Games_List();
             //Load_Profiles_List();
             Load_Application_Data();
+
+            //Register to the mediator for list updates
+            Mediator.Instance.Register(
+                (Object o) =>
+                {
+                    Profiles = (ObservableCollection<Profile>)o;
+                }, Mediator.ViewModelMessages.ProfileListUpdated);
+
+            Mediator.Instance.Register(
+                (Object o) =>
+                {
+                    Games = (ObservableCollection<Game>)o;
+                }, Mediator.ViewModelMessages.GameListUpdated);
         }
 
         #endregion

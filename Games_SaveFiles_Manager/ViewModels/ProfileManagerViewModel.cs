@@ -12,6 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
 using Games_SaveFiles_Manager.Models;
+using Games_SaveFiles_Manager.MediatorComms;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
@@ -45,6 +46,9 @@ namespace Games_SaveFiles_Manager.ViewModels
                 {
                     profiles = value;
                     OnPropertyChange("Profiles");
+
+                    //notify subscribing viewmodels over mediator to update their values
+                    Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                 }
             }
         }
@@ -323,6 +327,10 @@ namespace Games_SaveFiles_Manager.ViewModels
                                 new XElement("Creation_date", creation_time.ToString("dd/MM/yyyy HH:mm:ss"))));
                             xdoc.Save(fs);
                             fs.Close();
+
+                            //had to deviate from standard implementation, since collection is being updated, 
+                            //not created & assigned to the field
+                            Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                         }
                     else
                     {
@@ -376,6 +384,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     {
                         xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile").Where(x => (string)x.Element("Creation_date") == SelectedProfile.Creation_time.ToString("dd/MM/yyyy HH:mm:ss") && (string)x.Element("Name") != "default").Remove();
                         xdoc.Save(applicationDataFilePath);
+                        Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                     }
                 }
                 else
@@ -459,6 +468,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     }
 
                     xdoc.Save(applicationDataFilePath);
+                    Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                 }
             }
             catch(Exception ex)

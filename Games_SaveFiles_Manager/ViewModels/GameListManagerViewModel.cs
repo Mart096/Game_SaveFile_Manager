@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Linq;
+using Games_SaveFiles_Manager.MediatorComms;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
@@ -427,6 +428,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                         //games_listbox.Items.Add(gi_ob);
                         Games.Add(gi_ob);
                     }
+                    Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.GameListUpdated, games);
                 }
                 else
                 {
