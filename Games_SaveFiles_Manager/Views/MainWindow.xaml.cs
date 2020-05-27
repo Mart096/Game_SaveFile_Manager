@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using MahApps.Metro.Controls;
 
 namespace Games_SaveFiles_Manager
 {
@@ -84,16 +85,16 @@ namespace Games_SaveFiles_Manager
         {
             GamesListManager games_list_manager = new GamesListManager();
             games_list_manager.ShowDialog();
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //not very good solution. Need to find another way to force refreshing the data in listboxes
-            Application.Current.Shutdown();
+            //System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //not very good solution. Need to find another way to force refreshing the data in listboxes
+            //Application.Current.Shutdown();
         }
 
         private void Manage_Profiles_List_Click(object sender, RoutedEventArgs e)
         {
             ProfileManagerWindow profile_manager = new ProfileManagerWindow();
             profile_manager.ShowDialog();
-            System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //not very good solution. Need to find another way to force refreshing the data in listboxes
-            Application.Current.Shutdown();
+            //System.Diagnostics.Process.Start(Application.ResourceAssembly.Location); //not very good solution. Need to find another way to force refreshing the data in listboxes
+            //Application.Current.Shutdown();
         }
     }
 

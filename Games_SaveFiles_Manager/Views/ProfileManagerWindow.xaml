@@ -13,7 +13,13 @@
     </Window.Resources>
     <Grid>
         <Label Content="Profile" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" Width="100"/>
-        <ListBox x:Name="profile_listbox" HorizontalAlignment="Left" Width="100" Margin="10,36,0,10" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile, Mode=TwoWay}"/>
+        <ListBox x:Name="profile_listbox" HorizontalAlignment="Left" Width="100" Margin="10,36,0,10" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile, Mode=TwoWay}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Profile_name}"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
 
         <Label Content="Profile name" HorizontalAlignment="Left" Margin="115,10,0,0" VerticalAlignment="Top" Height="26" Width="153"/>
         <TextBox HorizontalAlignment="Left" Height="23" Margin="115,36,0,0" TextWrapping="Wrap" Name="selected_profile_name_textbox" IsReadOnly="{Binding EditMode, Converter={StaticResource BoolToNegativeConverter}}" VerticalAlignment="Top" Width="153" RenderTransformOrigin="0.54,0.389" Text="{Binding SelectedProfile.Profile_name}"/>

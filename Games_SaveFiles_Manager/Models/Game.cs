@@ -60,15 +60,11 @@ namespace Games_SaveFiles_Manager.Models
         #endregion
 
         #region Methods
+
         //public override string ToString()
         //{
         //    return Game_name.ToString();
         //}
-
-        public override string ToString()
-        {
-            return Game_name.ToString();
-        }
         #endregion
     }
 }
