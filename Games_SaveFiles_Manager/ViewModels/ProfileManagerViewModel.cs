@@ -48,7 +48,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                     OnPropertyChange("Profiles");
 
                     //notify subscribing viewmodels over mediator to update their values
-                    Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
+                    //Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                 }
             }
         }
@@ -291,6 +291,9 @@ namespace Games_SaveFiles_Manager.ViewModels
 
                         Profiles.Add(loaded_profile);
                     }
+                    //had to deviate from standard implementation, since collection is being updated, 
+                    //not created & assigned to the field
+                    Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
 
                 }
                 else //file containing list of profiles was not found and will be created instead
@@ -327,10 +330,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                                 new XElement("Creation_date", creation_time.ToString("dd/MM/yyyy HH:mm:ss"))));
                             xdoc.Save(fs);
                             fs.Close();
-
-                            //had to deviate from standard implementation, since collection is being updated, 
-                            //not created & assigned to the field
-                            Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                         }
                     else
                     {
@@ -384,7 +383,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                     {
                         xdoc.Element("Game_save_file_manager").Element("Profiles").Elements("Profile").Where(x => (string)x.Element("Creation_date") == SelectedProfile.Creation_time.ToString("dd/MM/yyyy HH:mm:ss") && (string)x.Element("Name") != "default").Remove();
                         xdoc.Save(applicationDataFilePath);
-                        Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                     }
                 }
                 else
@@ -468,7 +466,6 @@ namespace Games_SaveFiles_Manager.ViewModels
                     }
 
                     xdoc.Save(applicationDataFilePath);
-                    Mediator.Instance.NotifyColleagues(Mediator.ViewModelMessages.ProfileListUpdated, profiles);
                 }
             }
             catch(Exception ex)
