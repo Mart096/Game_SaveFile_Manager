@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Games_SaveFiles_Manager.Models
 {
@@ -19,11 +15,7 @@ namespace Games_SaveFiles_Manager.Models
         #endregion
 
         #region Constructors
-        public Profile()
-        {
-            Profile_name = "Unspecified";
-            Creation_time = DateTime.Now;
-        }
+        public Profile() : this("Unspecified") {}
 
         public Profile(string new_name)
         {

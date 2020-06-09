@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Games_SaveFiles_Manager.Models
 {
@@ -28,14 +24,7 @@ namespace Games_SaveFiles_Manager.Models
         #endregion
 
         #region Constructors
-        public Game()
-        {
-            Game_name = "Undefined";
-            Save_file_location = "";
-            Profile_specific_save_file_storage_method = -1;
-            Profile_used = "default";
-            ManageSelectedFilesOnly = false;
-        }
+        public Game() : this ("Undefined", "", -1) {}
 
         public Game(Game game)
         {

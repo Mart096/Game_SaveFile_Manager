@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Deployment.Application;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Deployment.Application;
 
 namespace Games_SaveFiles_Manager.ViewModels
 {
