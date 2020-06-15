@@ -59,11 +59,8 @@ namespace Games_SaveFiles_Manager.ViewModels
             {
                 if (selectedProfile != value)
                 {
-                    if (EditMode == false)
-                    {
-                        selectedProfile = value;
-                        OnPropertyChange("SelectedProfile");
-                    }
+                    selectedProfile = value;
+                    OnPropertyChange("SelectedProfile");
                 }
             }
         }
