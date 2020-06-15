@@ -81,16 +81,21 @@ namespace Games_SaveFiles_Manager.ViewModels
             {
                 if (selectedGame != value)
                 {
-                    FilesToBeManaged.Clear();
-                    selectedGame = value;
-                    if (selectedGame.ManageSelectedFilesOnly == true)
+                    //Deactivate_Edit_Mode();
+                    if (EditMode == false)
                     {
-                        foreach (string filename in selectedGame.FilesToManage)
+                        //EditMode = false;
+                        FilesToBeManaged.Clear();
+                        selectedGame = value;
+                        if (selectedGame.ManageSelectedFilesOnly == true)
                         {
-                            FilesToBeManaged.Add(filename);
+                            foreach (string filename in selectedGame.FilesToManage)
+                            {
+                                FilesToBeManaged.Add(filename);
+                            }
                         }
+                        OnPropertyChange("SelectedGame");
                     }
-                    OnPropertyChange("SelectedGame");
                 }
             }
         }
@@ -202,7 +207,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                 {
                     _activateEditModeCommand = new CommandHandler(
                         param => Activate_Edit_Mode(),
-                        param => CanExecute(true)
+                        param => CanActivateEditMode()
 
                         );
                 }
@@ -217,8 +222,8 @@ namespace Games_SaveFiles_Manager.ViewModels
                 if (_deactivateEditModeCommand == null)
                 {
                     _deactivateEditModeCommand = new CommandHandler(
-                        param => Deactivate_Edit_Mode()
-
+                        param => Deactivate_Edit_Mode(),
+                        param => CanDeactivateEditMode()
                         );
                 }
                 return _deactivateEditModeCommand;
@@ -327,6 +332,18 @@ namespace Games_SaveFiles_Manager.ViewModels
         {
             return parameter == null ? false : true;
         }
+
+        private bool CanActivateEditMode()
+        {
+            return EditMode != true ? true : false;
+        }
+
+        private bool CanDeactivateEditMode()
+        {
+            return EditMode != false ? true : false;
+        }
+
+        //private bool Can
 
         //private void Load_Games_List() //this method should be availabale in the main window
         //{
