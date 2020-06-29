@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Games_SaveFiles_Manager"
         mc:Ignorable="d"
         xmlns:ViewModels="clr-namespace:Games_SaveFiles_Manager.ViewModels"
-        Title="Games list manager" Height="427" MinHeight="427" MinWidth="520">
+        Title="Games list manager" Height="427" MinHeight="427" MinWidth="520" Width="720">
     <Window.Resources>
         <local:BoolToNegativeBoolConverter x:Key="BoolToNegBoolConv"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVisConv"/>

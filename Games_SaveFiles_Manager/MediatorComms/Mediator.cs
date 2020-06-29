@@ -45,6 +45,11 @@ namespace Games_SaveFiles_Manager.MediatorComms
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Adds new subscriber.
+        /// </summary>
+        /// <param name="callback"></param>
+        /// <param name="message"></param>
         public void Register(Action<object> callback, ViewModelMessages message)
         {
             internalList.AddValue(message, callback);
