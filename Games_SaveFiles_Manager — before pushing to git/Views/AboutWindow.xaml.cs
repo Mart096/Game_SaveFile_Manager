@@ -11,30 +11,23 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Xml;
-using System.Xml.Linq;
-using System.IO;
-using Games_SaveFiles_Manager.Models;
+using System.Deployment.Application;
 using Games_SaveFiles_Manager.ViewModels;
 
 namespace Games_SaveFiles_Manager
 {
     /// <summary>
-    /// Logika interakcji dla klasy GamesListManager.xaml
+    /// Logika interakcji dla klasy AboutWindow.xaml
     /// </summary>
-
-    public partial class GamesListManager : Window
+    public partial class AboutWindow : Window
     {
+        private AboutViewModel ViewModel;
 
-        private GameListManagerViewModel viewModel;
-
-        public GamesListManager()
+        public AboutWindow()
         {
-            viewModel = new GameListManagerViewModel();
-            this.DataContext = viewModel;
             InitializeComponent();
-            /*Load_Games_List();
-            new_game_name_textbox.IsReadOnly = false;*/
+            ViewModel = new AboutViewModel();
+            DataContext = ViewModel;
         }
     }
 }

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>Games_SaveFiles_Manager</RootNamespace>
-    <AssemblyName>Games_SaveFiles_Manager</AssemblyName>
+    <RootNamespace>Game_SaveFile_Manager</RootNamespace>
+    <AssemblyName>Game_SaveFile_Manager</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -49,9 +49,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ControlzEx, Version=3.0.2.4, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="MahApps.Metro, Version=1.6.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MahApps.Metro.1.6.5\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Deployment" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.3.0.2.4\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -74,6 +83,8 @@
     <Compile Include="BoolToVisibilityConverter.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="IntToSaveMethodConverter.cs" />
+    <Compile Include="MediatorComms\Mediator.cs" />
+    <Compile Include="MediatorComms\MultiDictionary.cs" />
     <Compile Include="Models\Profile.cs" />
     <Compile Include="ProfileChangeFailedException.cs" />
     <Compile Include="SaveStoreDecisionToBoolConverter.cs" />
@@ -143,6 +154,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
