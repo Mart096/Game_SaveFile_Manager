@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.779
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Games_SaveFiles_Manager", "Games_SaveFiles_Manager\Games_SaveFiles_Manager.csproj", "{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Game_SaveFile_Manager", "Games_SaveFiles_Manager\Game_SaveFile_Manager.csproj", "{D8DAC3E1-5AD5-4F61-88E4-4AC9C5C78B2C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject1", "UnitTestProject1\UnitTestProject1.csproj", "{3EA846D9-A284-4FDB-BD9C-8CEB1E612C3B}"
 EndProject
