@@ -460,7 +460,7 @@ namespace Games_SaveFiles_Manager.ViewModels
                         {
                             xdoc.Element("Game_save_file_manager").Element("Games").Add(new XElement("Game",
                                 new XElement("Id", " "), new XElement("Name", NewGameName), new XElement("Save_file_location", ""), 
-                                new XElement("Store_profile_saves_in_app_location", "1"), new XElement("Manage_selected_files_only", "false"), 
+                                new XElement("Store_profile_saves_in_app_location", "1"), new XElement("Profile_used", "default"), new XElement("Manage_selected_files_only", "false"), 
                                 new XElement("Files_to_manage")));
                             xdoc.Save(fs);
                             fs.Close();
